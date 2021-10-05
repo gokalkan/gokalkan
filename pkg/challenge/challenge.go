@@ -1,5 +1,7 @@
 package challenge
 
+import "fmt"
+
 /*
 	create token by login => save it in memeory
 
@@ -18,7 +20,7 @@ type Repository interface {
 }
 
 type Bridge interface {
-	VerifyXML()
+	VerifyXML(xml string) (string, int)
 }
 
 type service struct {
@@ -42,6 +44,7 @@ func (s *service) GenerateChallenge() string {
 }
 
 func (s *service) HandleChallenge(xml string) error {
-	// s.bR.VerifyXML()
+	m, rv := s.bR.VerifyXML(xml)
+	fmt.Println("HandleChallenge", m, rv)
 	return nil
 }
