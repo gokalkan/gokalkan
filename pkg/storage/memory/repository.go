@@ -1,9 +1,12 @@
 package memory
 
+// Storage ...
 type Storage struct {
 	Keys []string
 }
 
-func (s *Storage) AddKey(key string) {
+// AddKey ..
+func (s *Storage) AddKey(key string) error {
 	s.Keys = append(s.Keys, key)
+	return nil
 }

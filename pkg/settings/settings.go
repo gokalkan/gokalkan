@@ -10,6 +10,7 @@ import (
 type Settings struct {
 	DigitalSignaturePath string `yaml:"digital_signature_path"`
 	DigitalSignaturePass string `yaml:"digital_signature_pass"`
+	Port                 string `yaml:"port"`
 }
 
 // ParseYAML parses given yaml file and returns Settings instance

@@ -19,8 +19,9 @@ func main() {
 		fmt.Println("here?", e)
 		return
 	}
+	defer b.Close()
 	b.Init()
-	b.KC_LoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
+	b.KCLoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
 	// b.X509ExportCertificateFromStore()
 	s, rv := b.SignXML(`<company-id>770704034</company-id>`)
 	fmt.Println("SignXML", rv)
@@ -28,5 +29,4 @@ func main() {
 	fmt.Println("VerifyXML", rv)
 	// fmt.Println("VerifyXML", )
 	// fmt.Println("VerifyData", b.KC_GetLastErrorString())
-	b.Close()
 }

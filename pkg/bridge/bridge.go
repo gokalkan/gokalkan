@@ -53,10 +53,11 @@ import (
 	"github.com/Zulbukharov/kalkan-bind/pkg/dlopen"
 )
 
+// Kalkan ...
 type Kalkan interface {
 	Init()
-	KC_GetLastErrorString() string
-	KC_LoadKeyStore(password, containerPath string)
+	KCGetLastErrorString() string
+	KCLoadKeyStore(password, containerPath string)
 	X509ExportCertificateFromStore() (string, int)
 	VerifyData()
 	Close()
@@ -81,7 +82,8 @@ func NewKalkanBridge() (Kalkan, error) {
 	}, nil
 }
 
-func (b *bridge) KC_GetLastErrorString() string {
+// KC_GetLastErrorString ...
+func (b *bridge) KCGetLastErrorString() string {
 	errLen := 65534
 	var errStr [65534]byte
 	C.BindKC_GetLastErrorString((*C.char)(unsafe.Pointer(&errStr)), (*C.int)(unsafe.Pointer(&errLen)))
@@ -98,7 +100,7 @@ func (b *bridge) Init() {
 	fmt.Printf("%v\n", int(C.BindInit()))
 }
 
-func (b *bridge) KC_LoadKeyStore(password, containerPath string) {
+func (b *bridge) KCLoadKeyStore(password, containerPath string) {
 	// unsigned long KC_LoadKeyStore(int storage, char *password, int passLen, char *container, int containerLen, char *alias) {}
 	storage := 1 // KCST_PKCS12
 	Cpassword := C.CString(password)
@@ -129,7 +131,7 @@ func (b *bridge) X509ExportCertificateFromStore() (string, int) {
 		(*C.int)(unsafe.Pointer(&outCertLength)),
 	))
 	if rv != 0 {
-		return b.KC_GetLastErrorString(), rv
+		return b.KCGetLastErrorString(), rv
 	}
 	return C.GoString((*C.char)(cert)), rv
 }
@@ -214,8 +216,8 @@ func (b *bridge) SignXML(data string) (string, int) {
 	outSignLength := 50000 + inDataLength
 	outSign := C.malloc((C.ulong)(C.sizeof_uchar * outSignLength))
 	defer C.free(outSign)
-	signNodeId := C.CString("")
-	defer C.free(unsafe.Pointer(signNodeId))
+	signNodeID := C.CString("")
+	defer C.free(unsafe.Pointer(signNodeID))
 	parentSignNode := C.CString("")
 	defer C.free(unsafe.Pointer(parentSignNode))
 	parentNameSpace := C.CString("")
@@ -227,12 +229,12 @@ func (b *bridge) SignXML(data string) (string, int) {
 		(C.int)(inDataLength),
 		(*C.uchar)(outSign),
 		(*C.int)(unsafe.Pointer(&outSignLength)),
-		signNodeId,
+		signNodeID,
 		parentSignNode,
 		parentNameSpace,
 	))
 	if rv != 0 {
-		return b.KC_GetLastErrorString(), rv
+		return b.KCGetLastErrorString(), rv
 	}
 	return C.GoString((*C.char)(outSign)), rv
 }
@@ -258,7 +260,7 @@ func (b *bridge) VerifyXML(xml string) (string, int) {
 		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
 	))
 	if rv != 0 {
-		return b.KC_GetLastErrorString(), rv
+		return b.KCGetLastErrorString(), rv
 	}
 	return C.GoString((*C.char)(outVerifyInfo)), rv
 }

@@ -11,8 +11,6 @@ import (
 	"unsafe"
 )
 
-var ErrSoNotFound = errors.New("unable to open a handle to the library")
-
 // LibHandle represents an open handle to a library (.so)
 type LibHandle struct {
 	Handle  unsafe.Pointer

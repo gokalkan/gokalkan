@@ -1,4 +1,4 @@
-package http
+package httpd
 
 import (
 	"net/http"
@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Route ...
 func Route(ch ChallengeHandler) http.Handler {
 	router := mux.NewRouter()
 
