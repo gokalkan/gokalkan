@@ -14,6 +14,7 @@ import (
 type ChallengeHandler interface {
 	HandleChallenge(w http.ResponseWriter, r *http.Request)
 	SendChallenge(w http.ResponseWriter, r *http.Request)
+	GetChallenges(w http.ResponseWriter, r *http.Request)
 }
 
 type challengeHandler struct {
@@ -48,5 +49,13 @@ func (c *challengeHandler) HandleChallenge(w http.ResponseWriter, r *http.Reques
 }
 
 func (c *challengeHandler) SendChallenge(w http.ResponseWriter, r *http.Request) {
-	c.cS.GenerateChallenge("user")
+	challenge, err := c.cS.GenerateChallenge("user")
+	if err != nil {
+		response.Execute(w, nil, http.StatusBadRequest, err)
+	}
+	response.Execute(w, map[string]string{"challenge": challenge}, http.StatusOK, nil)
+}
+
+func (c *challengeHandler) GetChallenges(w http.ResponseWriter, r *http.Request) {
+	response.Execute(w, c.cS.GetChallenges(), http.StatusOK, nil)
 }

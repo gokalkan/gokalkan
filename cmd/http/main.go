@@ -29,7 +29,7 @@ func main() {
 	defer b.Close()
 	b.KCLoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
 
-	m := &memory.Storage{}
+	m := memory.NewStorage()
 	challengeS := challenge.NewService(m, b)
 
 	// b.X509ExportCertificateFromStore()

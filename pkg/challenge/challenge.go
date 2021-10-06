@@ -3,18 +3,23 @@ package challenge
 import (
 	"errors"
 	"fmt"
+
+	"github.com/Zulbukharov/kalkan-bind/pkg/storage/memory"
+	"github.com/google/uuid"
 )
 
 // Service ...
 type Service interface {
 	GenerateChallenge(login string) (string, error) // registerchallenge and return key
-	RegisterChallenge(key string) (string, error)   // save to the storage key
+	RegisterChallenge(key string) error             // save to the storage key
 	HandleChallenge(xml string) error               // accept xml verify key
+	GetChallenges() []memory.Challenge
 }
 
 // Repository ...
 type Repository interface {
 	AddKey(key string) error
+	GetKeys() []memory.Challenge
 	// VerifyKey(key string) error
 	// DeleteKey(key string) error
 }
@@ -23,6 +28,10 @@ type Repository interface {
 type Bridge interface {
 	VerifyXML(xml string) (string, int)
 }
+
+// type Tools interface {
+
+// }
 
 type service struct {
 	tR Repository
@@ -34,25 +43,30 @@ func NewService(r Repository, b Bridge) Service {
 	return &service{r, b}
 }
 
+func (s *service) buildChallenge(login string) string {
+	// uuid:login
+	id := uuid.New()
+	return fmt.Sprintf("<challenge>%s:%s</challenge>", id.String(), login)
+}
+
 // RegisterChallenge ...
 // will add new challenge with "uuid:login"
 // and ttl = 1hour
-func (s *service) RegisterChallenge(login string) (string, error) {
-	// generate uuid
+func (s *service) RegisterChallenge(login string) error {
 	if err := s.tR.AddKey(login); err != nil {
-		return "", err
+		return err
 	}
-	return login, nil
+	return nil
 }
 
 // GenerateChallenge accepts login to sign
 // will register challenge and return xml to sign
 func (s *service) GenerateChallenge(login string) (string, error) {
-	key, err := s.RegisterChallenge(login)
+	challenge := s.buildChallenge(login)
+	err := s.RegisterChallenge(challenge)
 	if err != nil {
 		return "", err
 	}
-	challenge := fmt.Sprintf("<challenge>%s</challenge>", key)
 	return challenge, nil
 }
 
@@ -66,4 +80,8 @@ func (s *service) HandleChallenge(xml string) error {
 		return errors.New(m)
 	}
 	return nil
+}
+
+func (s *service) GetChallenges() []memory.Challenge {
+	return s.tR.GetKeys()
 }
