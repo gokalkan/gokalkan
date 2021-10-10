@@ -27,6 +27,7 @@ func main() {
 	}
 	b.Init()
 	defer b.Close()
+	fmt.Println(conf.DigitalSignaturePath)
 	b.KCLoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
 
 	m := memory.NewStorage()

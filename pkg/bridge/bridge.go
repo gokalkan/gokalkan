@@ -48,6 +48,7 @@ package bridge
 import "C"
 import (
 	"fmt"
+	"regexp"
 	"unsafe"
 
 	"github.com/Zulbukharov/kalkan-bind/pkg/dlopen"
@@ -239,6 +240,10 @@ func (b *bridge) SignXML(data string) (string, int) {
 	return C.GoString((*C.char)(outSign)), rv
 }
 
+func extractSerialNumber(info string) string {
+	return 
+}
+
 // VerifyXML returns C function return value
 func (b *bridge) VerifyXML(xml string) (string, int) {
 	// unsigned long (*VerifyXML)(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen);
@@ -262,5 +267,8 @@ func (b *bridge) VerifyXML(xml string) (string, int) {
 	if rv != 0 {
 		return b.KCGetLastErrorString(), rv
 	}
-	return C.GoString((*C.char)(outVerifyInfo)), rv
+	outInfo := C.GoString((*C.char)(outVerifyInfo))
+	re := regexp.MustCompile(`serialNumber=.*`)
+	fmt.Println(re.FindAllString(outInfo, 1))
+	return extractSerialNumber(), rv
 }
