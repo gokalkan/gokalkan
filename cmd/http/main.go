@@ -33,7 +33,7 @@ func main() {
 	challengeS := challenge.NewService(m, b)
 
 	// b.X509ExportCertificateFromStore()
-	s, rv := b.SignXML(`<company-id>770704034</company-id>`)
+	s, rv := b.SignXML(`<root><challenge>770704034</challenge></root>`)
 	fmt.Println("SignXML", rv, s)
 
 	challengeHandler := httpd.NewChallengeHandler(challengeS)
