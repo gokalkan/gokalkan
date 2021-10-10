@@ -8,17 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-/*
-Challange can be in two types
-1. XML
-	<root><uuid></root>
-2. CMS
-	<uuid>
-
-Challenge struct should contain info about owner => IIN or BIN
-
-*/
-
 // Challenge ...
 type Challenge interface {
 	BuildChallenge() string
@@ -47,7 +36,7 @@ func NewChallenge(serial string, challengeType string) Challenge {
 }
 
 func (x *xmlChallenge) BuildChallenge() string {
-	return fmt.Sprintf("<challenge>%s</challenge>", x.UUID)
+	return fmt.Sprintf("<root><challenge>%s</challenge></root>", x.UUID)
 }
 
 func (x *xmlChallenge) GetSerial() string { return x.Serial }

@@ -42,7 +42,7 @@ func (s *storage) GetKeys() map[string]Challenge {
 // VerifyKey ...
 func (s *storage) VerifyKey(challenge string) error {
 	if val, ok := s.challenges[challenge]; ok {
-		fmt.Println(val)
+		fmt.Println("Storage val", val)
 		// delete
 		return nil
 	}

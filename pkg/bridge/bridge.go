@@ -241,7 +241,12 @@ func (b *bridge) SignXML(data string) (string, int) {
 }
 
 func extractSerialNumber(info string) string {
-	return 
+	re := regexp.MustCompile(`serialNumber=.*`)
+	f := re.FindAllString(info, 1)
+	if len(f) == 1 {
+		return f[0]
+	}
+	return ""
 }
 
 // VerifyXML returns C function return value
@@ -268,7 +273,5 @@ func (b *bridge) VerifyXML(xml string) (string, int) {
 		return b.KCGetLastErrorString(), rv
 	}
 	outInfo := C.GoString((*C.char)(outVerifyInfo))
-	re := regexp.MustCompile(`serialNumber=.*`)
-	fmt.Println(re.FindAllString(outInfo, 1))
-	return extractSerialNumber(), rv
+	return extractSerialNumber(outInfo), rv
 }

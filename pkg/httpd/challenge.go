@@ -44,6 +44,7 @@ func (c *challengeHandler) HandleChallenge(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		log.Println("Failed to handle challenge: ", err.Error())
 		response.Execute(w, nil, http.StatusBadRequest, errors.New(FailedToParse))
+		return
 	}
 	response.Execute(w, map[string]string{"status": "ok"}, http.StatusOK, nil)
 }
@@ -52,6 +53,7 @@ func (c *challengeHandler) SendChallenge(w http.ResponseWriter, r *http.Request)
 	challenge, err := c.cS.GenerateChallenge("user")
 	if err != nil {
 		response.Execute(w, nil, http.StatusBadRequest, err)
+		return
 	}
 	response.Execute(w, map[string]string{"challenge": challenge}, http.StatusOK, nil)
 }

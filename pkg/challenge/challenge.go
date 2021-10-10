@@ -52,13 +52,10 @@ func (s *service) GenerateChallenge(login string) (string, error) {
 // HandleChallenge accepts signed xml with data, signature, cert
 // retuns nil on success and error defined in bridge.consts
 func (s *service) HandleChallenge(xml string) error {
-	// parse xml => extract original data with challenge tag
+	// parse xml, validate it, extract challenge uuid
+	// verify xml by kalkan, receive serialnumber
+	// compare sn, validate challenge expiration, remove it at the end
 	challenge, err := ValidateSign([]byte(xml))
-	if err != nil {
-		return err
-	}
-
-	err = s.tR.VerifyKey(challenge)
 	if err != nil {
 		return err
 	}
@@ -67,6 +64,12 @@ func (s *service) HandleChallenge(xml string) error {
 	fmt.Println("HandleChallenge", m, rv)
 	if rv != 0 {
 		return errors.New(m)
+	}
+
+	fmt.Println("Serial from bridge", m)
+	err = s.tR.VerifyKey(challenge)
+	if err != nil {
+		return err
 	}
 	return nil
 }
