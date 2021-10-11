@@ -36,3 +36,6 @@ Kalkancrypt - это набор библиотек для шифрования, 
 - запустить `go run cmd/cli/main.go`
 
 ## License
+
+The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukharov). Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancrypt-wrapper/blob/master/LICENSE.md) for more details.
+
