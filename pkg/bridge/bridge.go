@@ -49,9 +49,10 @@ import "C"
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"unsafe"
 
-	"github.com/Zulbukharov/kalkan-bind/pkg/dlopen"
+	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/dlopen"
 )
 
 // Kalkan ...
@@ -65,8 +66,6 @@ type Kalkan interface {
 	SignXML(data string) (string, int)
 	VerifyXML(xml string) (string, int)
 }
-
-// unsigned long (*SignData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inSign, int inSignLen, unsigned char *outSign, int *outSignLength);
 
 type bridge struct {
 	handler *dlopen.LibHandle
@@ -244,7 +243,7 @@ func extractSerialNumber(info string) string {
 	re := regexp.MustCompile(`serialNumber=.*`)
 	f := re.FindAllString(info, 1)
 	if len(f) == 1 {
-		return f[0]
+		return strings.Replace(f[0], "serialNumber=", "", 1)
 	}
 	return ""
 }

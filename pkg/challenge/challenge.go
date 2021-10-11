@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Zulbukharov/kalkan-bind/pkg/storage/memory"
+	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/storage/memory"
 )
 
 // Service ...
 type Service interface {
-	GenerateChallenge(login string) (string, error) // registerchallenge and return key
-	HandleChallenge(xml string) error               // accept xml verify key
+	GenerateChallenge(login string) (string, error)
+	HandleChallenge(xml string) error // accept xml verify key
 	GetChallenges() map[string]memory.Challenge
 }
 
@@ -19,8 +19,6 @@ type Repository interface {
 	AddKey(key, serial string) error
 	GetKeys() map[string]memory.Challenge
 	VerifyKey(key string) error
-	// VerifyKey(key string) error
-	// DeleteKey(key string) error
 }
 
 // Bridge ...
@@ -49,7 +47,7 @@ func (s *service) GenerateChallenge(login string) (string, error) {
 	return challenge.BuildChallenge(), nil
 }
 
-// HandleChallenge accepts signed xml with data, signature, cert
+// HandleChallenge accepts signed xml with data, signature, cert \
 // retuns nil on success and error defined in bridge.consts
 func (s *service) HandleChallenge(xml string) error {
 	// parse xml, validate it, extract challenge uuid
@@ -61,12 +59,12 @@ func (s *service) HandleChallenge(xml string) error {
 	}
 
 	m, rv := s.bR.VerifyXML(xml)
-	fmt.Println("HandleChallenge", m, rv)
 	if rv != 0 {
 		return errors.New(m)
 	}
 
-	fmt.Println("Serial from bridge", m)
+	fmt.Println("Challenge", challenge)
+	fmt.Println("VerifyXML", m, rv)
 	err = s.tR.VerifyKey(challenge)
 	if err != nil {
 		return err

@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Zulbukharov/kalkan-bind/pkg/challenge"
-	"github.com/Zulbukharov/kalkan-bind/pkg/httpd/response"
+	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/challenge"
+	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/httpd/response"
 )
 
 // ChallengeHandler ...

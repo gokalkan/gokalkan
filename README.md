@@ -1,13 +1,19 @@
-# Golang Kalkan Bindings
+# Golang Kalkancrypt Wrapper
+
+⭐ Star us on GitHub — it motivates us a lot!
 
 ## Overview
 
-Библиотека калкан это so файл с доступными методами для подписания файлов, текста \
-используя ЭЦП. Принципы работы в PKI доступны [здесь]().
+<img href="logo.png"/>
 
-## About
+Golang Kalkancrypt Wrapper - это простой веб-сервис для аутентификации посредством взаимодейсвия с \
+с библиотеками kalkancrypt, используя ЭЦП.
 
-Golang Kalkan Bindings - это обертка для библиотека на Golang.
+## Kalkancrypt
+
+Kalkancrypt - это набор библиотек для шифрования, дешифрования данных.
+Одна из библиотек калкан это `libkalkancryptwr-64` файл с доступными методами для подписания файлов, \ 
+текста используя ЭЦП. Подробнее про PKI можно почитать [здесь](lib/README.md).
 
 ## Usage
 

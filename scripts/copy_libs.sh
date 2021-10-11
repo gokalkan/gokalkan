@@ -2,7 +2,7 @@
 
 set -e
 
-cp -r openssl/kalkancrypt /opt/
-cp -f openssl/libkalkancryptwr-64.so /usr/lib/ 
+cp -r lib/kalkancrypt /opt/
+cp -f lib/libkalkancryptwr-64.so /usr/lib/ 
 
 echo "✅ [copy of kalkancrypt libs done]"

@@ -43,9 +43,8 @@ func (x *xmlChallenge) GetSerial() string { return x.Serial }
 func (x *xmlChallenge) GetUUID() string   { return x.UUID }
 
 func (c *cmsChallenge) BuildChallenge() string { return "" }
-
-func (c *cmsChallenge) GetSerial() string { return c.Serial }
-func (c *cmsChallenge) GetUUID() string   { return c.UUID }
+func (c *cmsChallenge) GetSerial() string      { return c.Serial }
+func (c *cmsChallenge) GetUUID() string        { return c.UUID }
 
 type XMLSigned struct {
 	XMLName   xml.Name  `xml:"root"`
@@ -80,9 +79,9 @@ func ValidateSign(xmlData []byte) (string, error) {
 		return "", err
 	}
 
-	challenge := xmlSigned.Signature.SignatureValue
+	challenge := xmlSigned.Challenge
 	if challenge == "" ||
-		xmlSigned.Challenge == "" ||
+		xmlSigned.Signature.SignatureValue == "" ||
 		xmlSigned.Signature.KeyInfo.X509Data.X509Certificate == "" {
 		err = errors.New("Invalid sign")
 	}
