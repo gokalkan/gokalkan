@@ -1,3 +1,4 @@
-digital_signature_path: ""
-digital_signature_pass: ""
-port: 8000
+digital_signature_path: "" # relative path for the signature file
+digital_signature_pass: "" # pass for digital signature file
+port: 8000 # tcp port for the app
+ttl: 3600 # time to live for challenge in seconds

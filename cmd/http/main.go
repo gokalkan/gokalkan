@@ -25,24 +25,24 @@ func main() {
 		return
 	}
 
-	b, e := bridge.NewKalkanBridge()
+	bridgeService, e := bridge.NewKalkanBridge()
 	if e != nil {
 		fmt.Println("here?", e)
 		return
 	}
-	b.Init()
-	defer b.Close()
-	fmt.Println(conf.DigitalSignaturePath)
-	b.KCLoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
+	defer bridgeService.Close()
+	bridgeService.Init()
+	bridgeService.KCLoadKeyStore(conf.DigitalSignaturePass, conf.DigitalSignaturePath)
 
-	m := memory.NewStorage()
-	challengeS := challenge.NewService(m, b)
+	storageRepo := memory.NewStorage(conf.TTL)
+	challengeS := challenge.NewService(storageRepo, bridgeService)
 
+	// generate demo challenge
 	z, err := challengeS.GenerateChallenge("IIN012345678901")
 	if err != nil {
 		fmt.Println(err)
 	}
-	s, rv := b.SignXML(z)
+	s, rv := bridgeService.SignXML(z)
 	fmt.Println("SignXML", rv)
 	d, _ := json.Marshal(Message{s})
 	fmt.Println(string(d))

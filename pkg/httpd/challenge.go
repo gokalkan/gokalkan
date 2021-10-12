@@ -3,6 +3,7 @@ package httpd
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -14,7 +15,7 @@ import (
 type ChallengeHandler interface {
 	HandleChallenge(w http.ResponseWriter, r *http.Request)
 	SendChallenge(w http.ResponseWriter, r *http.Request)
-	GetChallenges(w http.ResponseWriter, r *http.Request)
+	// GetChallenges(w http.ResponseWriter, r *http.Request)
 }
 
 type challengeHandler struct {
@@ -28,7 +29,12 @@ func NewChallengeHandler(cs challenge.Service) ChallengeHandler {
 
 // SignedXML ...
 type SignedXML struct {
-	Xml string `json: "xml"`
+	XML string `json:"xml"`
+}
+
+// Response ...
+type Response struct {
+	Message string `json:"message"`
 }
 
 func (c *challengeHandler) HandleChallenge(w http.ResponseWriter, r *http.Request) {
@@ -40,24 +46,31 @@ func (c *challengeHandler) HandleChallenge(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err := c.cS.HandleChallenge(signedXML.Xml)
+	err := c.cS.HandleChallenge(signedXML.XML)
 	if err != nil {
 		log.Println("Failed to handle challenge: ", err.Error())
 		response.Execute(w, nil, http.StatusBadRequest, errors.New(FailedToParse))
 		return
 	}
-	response.Execute(w, map[string]string{"status": "ok"}, http.StatusOK, nil)
+	res := &Response{"ok"}
+	response.Execute(w, res, http.StatusOK, nil)
 }
 
 func (c *challengeHandler) SendChallenge(w http.ResponseWriter, r *http.Request) {
-	challenge, err := c.cS.GenerateChallenge("user")
+	serial := r.URL.Query().Get("serial")
+	if serial == "" || len(serial) > 20 || len(serial) < 5 {
+		response.Execute(w, nil, http.StatusBadRequest, fmt.Errorf("Invalid serial param"))
+		return
+	}
+	challenge, err := c.cS.GenerateChallenge(serial)
 	if err != nil {
 		response.Execute(w, nil, http.StatusBadRequest, err)
 		return
 	}
-	response.Execute(w, map[string]string{"challenge": challenge}, http.StatusOK, nil)
+	res := &Response{challenge}
+	response.Execute(w, res, http.StatusOK, nil)
 }
 
-func (c *challengeHandler) GetChallenges(w http.ResponseWriter, r *http.Request) {
-	response.Execute(w, c.cS.GetChallenges(), http.StatusOK, nil)
-}
+// func (c *challengeHandler) GetChallenges(w http.ResponseWriter, r *http.Request) {
+// 	response.Execute(w, c.cS.GetChallenges(), http.StatusOK, nil)
+// }
