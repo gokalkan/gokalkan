@@ -1,15 +1,12 @@
-package bridge
+package kalkan
 
 // #cgo LDFLAGS: -ldl
 // #include <dlfcn.h>
 // #include <string.h>
 // #include <stdlib.h>
-// #include "KalkanCrypt.h"
+// #include "cpp/KalkanCrypt.h"
 // #include <stdio.h>
 //
-// void printer() {
-//    printf("hello\n");
-// }
 // stKCFunctionsType *kc_funcs;
 //
 // void BindKC_GetFunctionList(void *f) {
@@ -46,8 +43,9 @@ package bridge
 // 	   return kc_funcs->VerifyXML(alias, flags, inData, inDataLength, outVerifyInfo, outVerifyInfoLen);
 // }
 import "C"
+
 import (
-	"fmt"
+	"errors"
 	"regexp"
 	"strings"
 	"unsafe"
@@ -55,174 +53,193 @@ import (
 	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/dlopen"
 )
 
-// Kalkan ...
-type Kalkan interface {
-	Init()
-	KCGetLastErrorString() string
-	KCLoadKeyStore(password, containerPath string)
-	X509ExportCertificateFromStore() (string, int)
-	VerifyData()
-	Close()
-	SignXML(data string) (string, int)
-	VerifyXML(xml string) (string, int)
-}
+// dynamicLibs is a list of required libs for Kalkan
+var dynamicLibs = []string{"libkalkancryptwr-64.so"}
 
-type bridge struct {
+// Client структура для взаимодействия с библиотекой Kalkan
+type Client struct {
 	handler *dlopen.LibHandle
 }
 
-// NewKalkanBridge ...
-func NewKalkanBridge() (Kalkan, error) {
-	h, e := dlopen.GetHandle([]string{"libkalkancryptwr-64.so"})
-	if e != nil {
-		return &bridge{}, e
+// NewClient возвращает клиента для работы с Kalkan
+func NewClient() (Kalkan, error) {
+	handler, err := dlopen.GetHandle(dynamicLibs)
+	if err != nil {
+		return &Client{}, err
 	}
-	return &bridge{
-		handler: h,
-	}, nil
+
+	cli := &Client{
+		handler: handler,
+	}
+
+	if err := cli.Init(); err != nil {
+		return nil, err
+	}
+
+	return cli, nil
 }
 
-// KC_GetLastErrorString ...
-func (b *bridge) KCGetLastErrorString() string {
+// GetLastErrorString возвращает текст последней ошибки
+func (cli *Client) GetLastErrorString() string {
 	errLen := 65534
-	var errStr [65534]byte
-	C.BindKC_GetLastErrorString((*C.char)(unsafe.Pointer(&errStr)), (*C.int)(unsafe.Pointer(&errLen)))
+	errStr := make([]byte, errLen)
+
+	C.BindKC_GetLastErrorString(
+		(*C.char)(unsafe.Pointer(&errStr)),
+		(*C.int)(unsafe.Pointer(&errLen)),
+	)
+
 	return string(errStr[:])
 }
 
-func (b *bridge) Init() {
-	f, err := b.handler.GetSymbolPointer("KC_GetFunctionList")
+// Init инициализирует библиотеку
+func (cli *Client) Init() error {
+	f, err := cli.handler.GetSymbolPointer("KC_GetFunctionList")
 	if err != nil {
-		fmt.Printf(`couldn't get symbol %v\n`, err)
-		return
+		return errors.New("unable to refer to KC_GetFunctionList - " + err.Error())
 	}
+
 	C.BindKC_GetFunctionList(f)
-	fmt.Printf("%v\n", int(C.BindInit()))
+	rc := int(C.BindInit())
+
+	return cli.returnErr(rc)
 }
 
-func (b *bridge) KCLoadKeyStore(password, containerPath string) {
-	// unsigned long KC_LoadKeyStore(int storage, char *password, int passLen, char *container, int containerLen, char *alias) {}
+// LoadKeyStore загружает ключи/сертификат из хранилища
+func (cli *Client) LoadKeyStore(password, containerPath string) error {
 	storage := 1 // KCST_PKCS12
+
 	Cpassword := C.CString(password)
 	defer C.free(unsafe.Pointer(Cpassword))
+
 	Ccontainer := C.CString(containerPath)
 	defer C.free(unsafe.Pointer(Ccontainer))
 
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
-	rv := C.BindKC_LoadKeyStore((C.int)(storage), Cpassword, (C.int)(len(password)), Ccontainer, (C.int)(len(containerPath)), alias)
-	fmt.Println("KC_LoadKeyStore", int(rv))
+	rc := (int)(C.BindKC_LoadKeyStore(
+		(C.int)(storage),
+		Cpassword,
+		(C.int)(len(password)),
+		Ccontainer,
+		(C.int)(len(containerPath)),
+		alias,
+	))
+
+	return cli.returnErr(rc)
 }
 
-func (b *bridge) X509ExportCertificateFromStore() (string, int) {
-	// int (*X509ExportCertificateFromStore)(char *alias, int flag, char *outCert, int *outCertLength)
+// X509ExportCertificateFromStore экспортирует сертификата из хранилища
+func (cli *Client) X509ExportCertificateFromStore() (string, error) {
 	flag := 1
 	outCertLength := 32768
+
 	cert := C.malloc((C.ulong)(C.sizeof_char * outCertLength))
 	defer C.free(cert)
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
-	rv := (int)(C.BindX509ExportCertificateFromStore(
+	rc := (int)(C.BindX509ExportCertificateFromStore(
 		alias,
 		(C.int)(flag),
 		(*C.char)(cert),
 		(*C.int)(unsafe.Pointer(&outCertLength)),
 	))
-	if rv != 0 {
-		return b.KCGetLastErrorString(), rv
-	}
-	return C.GoString((*C.char)(cert)), rv
+	resultCert := C.GoString((*C.char)(cert))
+
+	return resultCert, cli.returnErr(rc)
 }
 
-// VerifyData returs verification result of signature by data and public key
-func (b *bridge) VerifyData() {
-	// accepts inData
-	// unsigned long BindVerifyData(char *alias, int flags, char *inData, int inDataLength, char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength)
-	/*
-		alias = NULL
-		flags = 0
-		inData // data to verify (hello world)
-		inDataLength
-		inoutSign // data signature crypted by private key
-		inoutSignLength
-		outData
-		outDataLen
-		outVerifyInfo
-		outVerifyInfoLen
-		inCertID
-		outCert
-		outCertLength
-	*/
+// VerifiedData структура возвращаемая от метода VerifyData
+type VerifiedData struct {
+	Cert string
+	Info string
+	Data string
+}
+
+// VerifyData обеспечивает проверку подписи
+// TODO: принимать аргументы и возврашать результат и ошибку
+func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
+
 	flag := 0
-	inData := C.CString("as")
+
+	inData := C.CString(data)
 	defer C.free(unsafe.Pointer(inData))
 	inDataLength := 0
+
 	inoutSign := C.CString("")
 	defer C.free(unsafe.Pointer(inoutSign))
 	inoutSignLength := 0
-	outDataLen := 28000
-	outData := C.malloc((C.ulong)(C.sizeof_char * outDataLen))
-	defer C.free(outData)
-	var outVerifyInfo [64768]byte
+
+	outVerifyDataLen := 28000
+	outVerifyData := make([]byte, outVerifyDataLen)
+
 	outVerifyInfoLen := 64768
+	outVerifyInfo := make([]byte, outVerifyInfoLen)
+
 	inCertID := 0
-	var outCert [64768]byte
+
 	outCertLength := 64768
-	C.BindVerifyData(
+	outCert := make([]byte, outCertLength)
+
+	rc := (int)(C.BindVerifyData(
 		alias,
 		(C.int)(flag),
 		inData,
 		(C.int)(inDataLength),
 		inoutSign,
 		(C.int)(inoutSignLength),
-		(*C.char)(outData),
-		(*C.int)(unsafe.Pointer(&outDataLen)),
+		(*C.char)(unsafe.Pointer(&outVerifyData)),
+		(*C.int)(unsafe.Pointer(&outVerifyDataLen)),
 		(*C.char)(unsafe.Pointer(&outVerifyInfo)),
 		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
 		(C.int)(inCertID),
 		(*C.char)(unsafe.Pointer(&outCert)),
 		(*C.int)(unsafe.Pointer(&outCertLength)),
-	)
+	))
+	if err := cli.returnErr(rc); err != nil {
+		return nil, err
+	}
+	return &VerifiedData{
+		Cert: string(outCert[:]),
+		Info: string(outVerifyInfo[:]),
+		Data: string(outVerifyData[:]),
+	}, nil
 }
 
-func (b *bridge) Close() {
-	b.handler.Close()
+// Close закрывает связь с динамической библиотекой
+func (cli *Client) Close() error {
+	return cli.handler.Close()
 }
 
-// SignXML returns signed xml and result status
-func (b *bridge) SignXML(data string) (string, int) {
-	// unsigned long (*SignXML)(char *alias, int flags, char *inData, int inDataLength, unsigned char *outSign, int *outSignLength, char *signNodeId, char *parentSignNode, char *parentNameSpace);
-	/*
-		alias ""
-		flags 0
-		inData "ok"
-		inDataLength 0
-		outSign []{}
-		outSignLength 50000 + inDataLength
-		signNodeId ""
-		parentSignNode ""
-		parentNameSpace ""
-	*/
+// SignXML подписывает данные в формате XML
+func (cli *Client) SignXML(data string) (string, error) {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
+
 	flag := 0
+
 	inData := C.CString(data)
 	defer C.free(unsafe.Pointer(inData))
 	inDataLength := len(data)
+
 	outSignLength := 50000 + inDataLength
 	outSign := C.malloc((C.ulong)(C.sizeof_uchar * outSignLength))
 	defer C.free(outSign)
+
 	signNodeID := C.CString("")
 	defer C.free(unsafe.Pointer(signNodeID))
+
 	parentSignNode := C.CString("")
 	defer C.free(unsafe.Pointer(parentSignNode))
+
 	parentNameSpace := C.CString("")
 	defer C.free(unsafe.Pointer(parentNameSpace))
-	rv := (int)(C.BindSignXML(
+
+	rc := (int)(C.BindSignXML(
 		alias,
 		(C.int)(flag),
 		inData,
@@ -233,10 +250,46 @@ func (b *bridge) SignXML(data string) (string, int) {
 		parentSignNode,
 		parentNameSpace,
 	))
-	if rv != 0 {
-		return b.KCGetLastErrorString(), rv
+	signedXML := C.GoString((*C.char)(outSign))
+
+	return signedXML, cli.returnErr(rc)
+}
+
+// VerifyXML обеспечивает проверку подписи данных в формате XML
+func (cli *Client) VerifyXML(xml string) (string, error) {
+	alias := C.CString("")
+	defer C.free(unsafe.Pointer(alias))
+
+	flags := 0
+
+	inData := C.CString(xml)
+	defer C.free(unsafe.Pointer(inData))
+	inDataLength := len(xml)
+
+	outVerifyInfoLen := 64768
+	outVerifyInfo := C.malloc((C.ulong)(C.sizeof_char * outVerifyInfoLen))
+	defer C.free(outVerifyInfo)
+
+	rc := (int)(C.BindVerifyXML(
+		alias,
+		(C.int)(flags),
+		inData,
+		(C.int)(inDataLength),
+		(*C.char)(outVerifyInfo),
+		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
+	))
+	outInfo := C.GoString((*C.char)(outVerifyInfo))
+	serialNumber := extractSerialNumber(outInfo)
+
+	return serialNumber, cli.returnErr(rc)
+}
+
+// returnErr возвращает последнюю глобальную ошибку, если returnCode не равен 0
+func (cli *Client) returnErr(returnCode int) error {
+	if returnCode != 0 {
+		return errors.New(cli.GetLastErrorString())
 	}
-	return C.GoString((*C.char)(outSign)), rv
+	return nil
 }
 
 func extractSerialNumber(info string) string {
@@ -246,31 +299,4 @@ func extractSerialNumber(info string) string {
 		return strings.Replace(f[0], "serialNumber=", "", 1)
 	}
 	return ""
-}
-
-// VerifyXML returns C function return value
-func (b *bridge) VerifyXML(xml string) (string, int) {
-	// unsigned long (*VerifyXML)(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen);
-	alias := C.CString("")
-	defer C.free(unsafe.Pointer(alias))
-	flags := 0
-	inData := C.CString(xml)
-	defer C.free(unsafe.Pointer(inData))
-	inDataLength := len(xml)
-	outVerifyInfoLen := 64768
-	outVerifyInfo := C.malloc((C.ulong)(C.sizeof_char * outVerifyInfoLen))
-	defer C.free(outVerifyInfo)
-	rv := (int)(C.BindVerifyXML(
-		alias,
-		(C.int)(flags),
-		inData,
-		(C.int)(inDataLength),
-		(*C.char)(outVerifyInfo),
-		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
-	))
-	if rv != 0 {
-		return b.KCGetLastErrorString(), rv
-	}
-	outInfo := C.GoString((*C.char)(outVerifyInfo))
-	return extractSerialNumber(outInfo), rv
 }
