@@ -42,6 +42,14 @@ package kalkan
 // unsigned long BindVerifyXML(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen) {
 // 	   return kc_funcs->VerifyXML(alias, flags, inData, inDataLength, outVerifyInfo, outVerifyInfoLen);
 // }
+//
+// void BindXMLFinalize() {
+//     return (kc_funcs)->KC_XMLFinalize();
+// }
+//
+// void BindFinalize() {
+//     return (kc_funcs)->KC_Finalize();
+// }
 import "C"
 
 import (
@@ -51,6 +59,13 @@ import (
 	"unsafe"
 
 	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/dlopen"
+)
+
+const (
+	ErrLength           = 65534
+	OutVerifyDataLength = 28000
+	OutVerifyInfoLength = 64768
+	OutCertLength       = 64768
 )
 
 // dynamicLibs is a list of required libs for Kalkan
@@ -95,13 +110,15 @@ func (cli *Client) Init() error {
 // Close закрывает связь с динамической библиотекой
 // TODO: вызывать Finalize
 func (cli *Client) Close() error {
+	cli.XMLFinalize()
+	cli.Finalize()
 	return cli.handler.Close()
 }
 
 // GetLastErrorString возвращает текст последней ошибки
 func (cli *Client) GetLastErrorString() string {
-	errLen := 65534
-	errStr := make([]byte, errLen)
+	errLen := ErrLength
+	var errStr [ErrLength]byte
 
 	C.BindKC_GetLastErrorString(
 		(*C.char)(unsafe.Pointer(&errStr)),
@@ -181,16 +198,16 @@ func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 	defer C.free(unsafe.Pointer(inoutSign))
 	inoutSignLength := 0
 
-	outVerifyDataLen := 28000
-	outVerifyData := make([]byte, outVerifyDataLen)
+	var outVerifyData [OutVerifyDataLength]byte
+	outVerifyDataLen := OutVerifyDataLength
 
-	outVerifyInfoLen := 64768
-	outVerifyInfo := make([]byte, outVerifyInfoLen)
+	var outVerifyInfo [OutVerifyInfoLength]byte
+	outVerifyInfoLen := OutVerifyInfoLength
 
 	inCertID := 0
 
-	outCertLength := 64768
-	outCert := make([]byte, outCertLength)
+	var outCert [OutCertLength]byte
+	outCertLen := OutCertLength
 
 	rc := (int)(C.BindVerifyData(
 		alias,
@@ -205,7 +222,7 @@ func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
 		(C.int)(inCertID),
 		(*C.char)(unsafe.Pointer(&outCert)),
-		(*C.int)(unsafe.Pointer(&outCertLength)),
+		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))
 	if err := cli.returnErr(rc); err != nil {
 		return nil, err
@@ -280,11 +297,25 @@ func (cli *Client) VerifyXML(xml string) (string, error) {
 		(*C.char)(outVerifyInfo),
 		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
 	))
+	if err := cli.returnErr(rc); err != nil {
+		return "", err
+	}
+
 	outInfo := C.GoString((*C.char)(outVerifyInfo))
 	serialNumber := extractSerialNumber(outInfo)
-	_ = rc
-	// return serialNumber, cli.returnErr(rc)
-	return serialNumber, cli.returnErr(rc)
+	return serialNumber, nil
+}
+
+// Finalize освобождает ресурсы криптопровайдера KalkanCryptCOM и завершает работу библиотеки
+func (cli *Client) Finalize() {
+	C.BindFinalize()
+}
+
+// XMLFinalize освобождает память и завершает работу библиотеки с модулями,
+// отвечающие за парсинг, подпись и проверку данных в формате XML.
+// Не надо вызывать каждый раз при подписи. Можно только один раз после цикла подписания xml файлов
+func (cli *Client) XMLFinalize() {
+	C.BindXMLFinalize()
 }
 
 // returnErr возвращает последнюю глобальную ошибку, если returnCode не равен 0

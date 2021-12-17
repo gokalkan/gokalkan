@@ -2,7 +2,6 @@ package kalkan
 
 import (
 	_ "embed"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -56,12 +55,12 @@ func (ks *KalkanSuite) TestSignXML() {
 			expError:    false,
 			expEmptyXML: false,
 		},
-		// { // PANIC! panics on this testcase
-		// 	name:     "broken xml",
-		// 	input:    "<root>GoKalkan</invalid>",
-		// 	expError: true,
-		// 	expEmptyXML:   true,
-		// },
+		{
+			name:        "broken xml",
+			input:       "<root>GoKalkan</invalid>",
+			expError:    true,
+			expEmptyXML: true,
+		},
 	}
 	for _, ts := range tests {
 		ks.T().Run(ts.name, func(t *testing.T) {
@@ -84,7 +83,7 @@ func (ks *KalkanSuite) TestVerifyXML() {
 			name:        "simple",
 			rawXML:      "<root>GoKalkan</root>",
 			editSigned:  func(s string) string { return s },
-			expError:    false,
+			expError:    true,
 			expEmptyXML: false,
 		},
 	}
@@ -98,9 +97,6 @@ func (ks *KalkanSuite) TestVerifyXML() {
 
 			data := ts.editSigned(xml)
 			serialNum, err := ks.cli.VerifyXML(data)
-			fmt.Println("data", data)
-			fmt.Println("serialNum", serialNum)
-			fmt.Println("err", err)
 			expectError(ks.Assert(), "VerifyXML", ts.expError, err)
 			expectEmpty(ks.Assert(), "VerifyXML", ts.expEmptyXML, serialNum)
 		})
