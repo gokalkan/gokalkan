@@ -16,3 +16,4 @@
 resource/
 config.yml
 .DS_Store
+tmp_main

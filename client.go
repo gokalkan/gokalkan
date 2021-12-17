@@ -79,19 +79,6 @@ func NewClient() (Kalkan, error) {
 	return cli, nil
 }
 
-// GetLastErrorString возвращает текст последней ошибки
-func (cli *Client) GetLastErrorString() string {
-	errLen := 65534
-	errStr := make([]byte, errLen)
-
-	C.BindKC_GetLastErrorString(
-		(*C.char)(unsafe.Pointer(&errStr)),
-		(*C.int)(unsafe.Pointer(&errLen)),
-	)
-
-	return string(errStr[:])
-}
-
 // Init инициализирует библиотеку
 func (cli *Client) Init() error {
 	f, err := cli.handler.GetSymbolPointer("KC_GetFunctionList")
@@ -103,6 +90,26 @@ func (cli *Client) Init() error {
 	rc := int(C.BindInit())
 
 	return cli.returnErr(rc)
+}
+
+// Close закрывает связь с динамической библиотекой
+// TODO: вызывать Finalize
+func (cli *Client) Close() error {
+	return cli.handler.Close()
+}
+
+// GetLastErrorString возвращает текст последней ошибки
+func (cli *Client) GetLastErrorString() string {
+	errLen := 65534
+	errStr := make([]byte, errLen)
+
+	C.BindKC_GetLastErrorString(
+		(*C.char)(unsafe.Pointer(&errStr)),
+		(*C.int)(unsafe.Pointer(&errLen)),
+	)
+	// TODO:
+	// - panics on invalid XML
+	return string(errStr[:])
 }
 
 // LoadKeyStore загружает ключи/сертификат из хранилища
@@ -210,11 +217,6 @@ func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 	}, nil
 }
 
-// Close закрывает связь с динамической библиотекой
-func (cli *Client) Close() error {
-	return cli.handler.Close()
-}
-
 // SignXML подписывает данные в формате XML
 func (cli *Client) SignXML(data string) (string, error) {
 	alias := C.CString("")
@@ -280,7 +282,8 @@ func (cli *Client) VerifyXML(xml string) (string, error) {
 	))
 	outInfo := C.GoString((*C.char)(outVerifyInfo))
 	serialNumber := extractSerialNumber(outInfo)
-
+	_ = rc
+	// return serialNumber, cli.returnErr(rc)
 	return serialNumber, cli.returnErr(rc)
 }
 
