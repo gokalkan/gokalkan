@@ -1,43 +1,87 @@
-# Golang Kalkancrypt Wrapper
+# GoKalkan [WIP]
 
-# WIP
-
-<img src="assets/logo.png" width="200px" align='right'/>
+<!-- <img src="assets/logo.png" width="200px" align='right'/> -->
 
 ⭐ Star on GitHub — it motivates me a lot!
 
-## Overview
+## Описание
 
-Golang Kalkancrypt Wrapper - это простой веб-сервис для аутентификации посредством взаимодейсвия с \
-с библиотеками kalkancrypt, используя ЭЦП.
+GoKalkan - это библиотека-обертка над KalkanCrypt для Golang.
 
-## Kalkancrypt
+### KalkanCrypt
 
-Kalkancrypt - это набор библиотек для шифрования, дешифрования данных.
-Одна из библиотек калкан это `libkalkancryptwr-64` файл с доступными методами для подписания файлов, \ 
+KalkanCrypt - это набор библиотек для шифрования, дешифрования данных.
+
+Одна из библиотек калкан это `libkalkancryptwr-64`, файл с доступными методами для подписания файлов, 
 текста используя ЭЦП. Подробнее про PKI можно почитать [здесь](lib/README.md).
 
-## Features
+Основные методы KalkanCrypt реализованы в `libkalkancryptwr-64`. Это файл доступными методами 
+для подписания файлов, текста используя ЭЦП. Подробнее про PKI можно почитать [здесь](wiki/README.md).
 
-- Подписания текста, получения ответа в виде xml.
-- Проверка XML подписи.
+## Доступный функционал
 
-## Usage
+```go
+// Kalkan - интерфейс с методами KalkanCrypt
+type Kalkan interface {
+	Init() error
+	LoadKeyStore(password, containerPath string) error
+	SignXML(data string) (string, error)
+	VerifyXML(xml string) (string, error)
+	VerifyData(data string) (*VerifiedData, error)
+	X509ExportCertificateFromStore() (string, error)
+	GetLastErrorString() string
+	Close() error
+}
+```
 
-> Для запуска программы, необходимо:
+Не все доступные методы пока были реализованы. Для знакомства со всеми функциями перейти [сюда](cpp/KalkanCrypt.h).
 
-- Скопировать файлы kalkancrypt. \
-`bash scripts/copy_libs.sh`\
-**hint**  для получения SDK нужно обратиться в [pki.gov.kz](https://pki.gov.kz/developers/)
-- Добавить в доверенные сертификаты из certs, которые находятся в SDK [pki.gov.kz](https://pki.gov.kz/developers/) для получения.
-*hint* `bash scripts/install_certs.sh`
-- добавить переменную окружения `LD_LIBRARY_PATH` для доступа программе к SDK. \
-`export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/engines`
-- заполнить файл `config.yml.example` и переименовать.
-`mv config.yml.example config.yml`
-- запустить `go run cmd/cli/main.go`
+## Запуск
+
+Чтобы использовать библиотеку требуется провести подготовку:
+
+#### 1. Обратиться в [pki.gov.kz](https://pki.gov.kz/developers/) чтобы получить SDK
+
+SDK представляет собой набор библиотек для Java и C.
+
+#### 2. Установить в доверенные сертификаты
+
+Сертификаты будут лежать по пути `SDK/C/Linux/ca-certs/Ubuntu`. Будут два типа сертфикатов - `production` и `test`.
+
+В папке будут скрипты для установки сертификатов, понадобится sudo права.
+
+#### 3. Скопировать `libkalkancryptwr-64.so` и `libkalkancryptwr-64.so.1.1.0` в /usr/lib/
+
+Файлы лежат в директории `SDK/C/Linux/C`. Команда для копирования:
+
+```sh
+sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
+```
+
+#### 4. Скопировать `kalkancrypt`  в `/opt/`
+
+`kalkancrypt` - представляет набор из общих библиотек и состоит из файлов расширения `.so`.
+
+Скопируйте папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`
+
+```sh
+sudo cp -r kalkancrypt /opt/
+```
+
+#### 5. LD_LIBRARY_PATH
+
+При обращении к GoKalkan убедитесь что экспортирована переменная окружения
+
+```sh
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/engines
+```
+
+Это переменная нужна для динамического обращения к библиотеке KalkanCrypt.
+
 
 ## License
 
-The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukharov). Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancrypt-wrapper/blob/master/LICENSE.md) for more details.
+The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukharov).
+
+Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancrypt-wrapper/blob/master/LICENSE.md) for more details.
 
