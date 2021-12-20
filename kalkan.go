@@ -1,6 +1,6 @@
 package kalkan
 
-// Kalkan ...
+// Kalkan - интерфейс с методами KalkanCrypt
 type Kalkan interface {
 	Init() error
 	GetLastErrorString() string
