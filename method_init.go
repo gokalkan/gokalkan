@@ -14,7 +14,9 @@ package kalkan
 //     return (kc_funcs)->KC_Init();
 // }
 import "C"
-import "errors"
+import (
+	"errors"
+)
 
 // Init инициализирует библиотеку
 func (cli *Client) Init() error {
@@ -22,7 +24,6 @@ func (cli *Client) Init() error {
 	if err != nil {
 		return errors.New("unable to refer to KC_GetFunctionList - " + err.Error())
 	}
-
 	C.GetFunctionList(f)
 	rc := int(C.Init())
 
