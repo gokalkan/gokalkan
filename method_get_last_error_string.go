@@ -10,7 +10,7 @@ package kalkan
 import "C"
 import "unsafe"
 
-// ErrLength is the length for the error string passed to CGO
+// ErrLength длина строки с ошибкой возвращаемая от KalkanCrypt
 const ErrLength = 65534
 
 // GetLastErrorString возвращает текст последней ошибки
