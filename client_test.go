@@ -110,15 +110,13 @@ func TestKalkan(t *testing.T) {
 func expectError(as *assert.Assertions, name string, expErr bool, err error) bool {
 	if expErr {
 		return as.Error(err, "Expect error on", name)
-	} else {
-		return as.NoError(err, "Expect no error on", name)
 	}
+	return as.NoError(err, "Expect no error on", name)
 }
 
 func expectEmpty(as *assert.Assertions, name string, expEmpty bool, object interface{}) bool {
 	if expEmpty {
 		return as.Empty(object, "Expect empty object on", name)
-	} else {
-		return as.NotEmpty(object, "Expect non-empty object on", name)
 	}
+	return as.NotEmpty(object, "Expect non-empty object on", name)
 }
