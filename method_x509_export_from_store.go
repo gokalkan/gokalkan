@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// int X509ExportCertificateFromStore(char *alias, int flag, char *outCert, int *outCertLength) {
+// int x509ExportCertificateFromStore(char *alias, int flag, char *outCert, int *outCertLength) {
 //     return kc_funcs->X509ExportCertificateFromStore(alias, flag, outCert, outCertLength);
 // }
 import "C"
@@ -20,7 +20,7 @@ func (cli *Client) X509ExportCertificateFromStore() (string, error) {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
-	rc := (int)(C.X509ExportCertificateFromStore(
+	rc := (int)(C.x509ExportCertificateFromStore(
 		alias,
 		(C.int)(flag),
 		(*C.char)(cert),

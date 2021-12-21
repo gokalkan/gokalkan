@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// unsigned long VerifyXML(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen) {
+// unsigned long verifyXML(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen) {
 // 	   return kc_funcs->VerifyXML(alias, flags, inData, inDataLength, outVerifyInfo, outVerifyInfoLen);
 // }
 import "C"
@@ -29,7 +29,7 @@ func (cli *Client) VerifyXML(xml string) (string, error) {
 	outVerifyInfo := C.malloc((C.ulong)(C.sizeof_char * outVerifyInfoLen))
 	defer C.free(outVerifyInfo)
 
-	rc := (int)(C.VerifyXML(
+	rc := (int)(C.verifyXML(
 		alias,
 		(C.int)(flags),
 		inData,

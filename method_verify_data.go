@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// unsigned long VerifyData(char *alias, int flags, char *inData, int inDataLength, char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
+// unsigned long verifyData(char *alias, int flags, char *inData, int inDataLength, char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
 //    return kc_funcs->VerifyData(alias, flags, inData, inDataLength, (unsigned char*)inoutSign, inoutSignLength, outData, outDataLen, outVerifyInfo, outVerifyInfoLen, inCertID, outCert, outCertLength);
 // }
 import "C"
@@ -49,7 +49,7 @@ func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 	var outCert [OutCertLength]byte
 	outCertLen := OutCertLength
 
-	rc := (int)(C.VerifyData(
+	rc := (int)(C.verifyData(
 		alias,
 		(C.int)(flag),
 		inData,

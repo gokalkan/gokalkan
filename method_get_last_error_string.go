@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// void GetLastErrorString(char *errorString, int *bufSize) {
+// void getLastErrorString(char *errorString, int *bufSize) {
 //     kc_funcs->KC_GetLastErrorString(errorString, bufSize);
 // }
 import "C"
@@ -17,7 +17,7 @@ func (cli *Client) GetLastErrorString() string {
 	errLen := ErrLength
 	var errStr [ErrLength]byte
 
-	C.GetLastErrorString(
+	C.getLastErrorString(
 		(*C.char)(unsafe.Pointer(&errStr)),
 		(*C.int)(unsafe.Pointer(&errLen)),
 	)

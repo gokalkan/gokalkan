@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// unsigned long BindSignXML(char *alias, int flags, char *inData, int inDataLength, unsigned char *outSign, int *outSignLength, char *signNodeId, char *parentSignNode, char *parentNameSpace) {
+// unsigned long signXML(char *alias, int flags, char *inData, int inDataLength, unsigned char *outSign, int *outSignLength, char *signNodeId, char *parentSignNode, char *parentNameSpace) {
 //     return kc_funcs->SignXML(alias, flags, inData, inDataLength, outSign, outSignLength, signNodeId, parentSignNode, parentNameSpace);
 // }
 import "C"
@@ -34,7 +34,7 @@ func (cli *Client) SignXML(data string) (string, error) {
 	parentNameSpace := C.CString("")
 	defer C.free(unsafe.Pointer(parentNameSpace))
 
-	rc := (int)(C.BindSignXML(
+	rc := (int)(C.signXML(
 		alias,
 		(C.int)(flag),
 		inData,

@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// int LoadKeyStore(int storage, char *password, int passLen, char *container, int containerLen, char *alias) {
+// int loadKeyStore(int storage, char *password, int passLen, char *container, int containerLen, char *alias) {
 //     return kc_funcs->KC_LoadKeyStore(storage, password, passLen, container, containerLen, alias);
 // }
 import "C"
@@ -23,7 +23,7 @@ func (cli *Client) LoadKeyStore(password, containerPath string) error {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
-	rc := (int)(C.LoadKeyStore(
+	rc := (int)(C.loadKeyStore(
 		(C.int)(storage),
 		Cpassword,
 		(C.int)(len(password)),

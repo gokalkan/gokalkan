@@ -2,16 +2,18 @@ package kalkan
 
 // #cgo LDFLAGS: -ldl
 // #include <dlfcn.h>
+// #include <stdio.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// void GetFunctionList(void *f) {
+// void getFunctionList(void *f) {
 //     void (*KC_GetFunctionList)(stKCFunctionsType **);
 //     KC_GetFunctionList = (void (*)(stKCFunctionsType **))f;
 //     KC_GetFunctionList(&kc_funcs);
 // }
 //
-// int Init() {
-//     return (kc_funcs)->KC_Init();
+// int init() {
+//     int rv = (kc_funcs)->KC_Init();
+//     return rv;
 // }
 import "C"
 import (
@@ -24,8 +26,8 @@ func (cli *Client) Init() error {
 	if err != nil {
 		return errors.New("unable to refer to KC_GetFunctionList - " + err.Error())
 	}
-	C.GetFunctionList(f)
-	rc := int(C.Init())
+	C.getFunctionList(f)
+	rc := int(C.init())
 
 	return cli.returnErr(rc)
 }

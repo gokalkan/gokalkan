@@ -4,7 +4,7 @@ package kalkan
 // #include <dlfcn.h>
 // #include "cpp/KalkanCrypt.h"
 //
-// void XMLFinalize() {
+// void xmlFinalize() {
 //     return (kc_funcs)->KC_XMLFinalize();
 // }
 import "C"
@@ -13,5 +13,5 @@ import "C"
 // отвечающие за парсинг, подпись и проверку данных в формате XML.
 // Не надо вызывать каждый раз при подписи. Можно только один раз после цикла подписания xml файлов
 func (cli *Client) XMLFinalize() {
-	C.XMLFinalize()
+	C.xmlFinalize()
 }
