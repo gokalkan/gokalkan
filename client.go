@@ -1,7 +1,7 @@
 package kalkan
 
 import (
-	"github.com/Zulbukharov/kalkancrypt-wrapper/pkg/dlopen"
+	"github.com/Zulbukharov/GoKalkan/pkg/dlopen"
 )
 
 // dynamicLibs is a list of required libs for Kalkan

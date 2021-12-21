@@ -1,4 +1,4 @@
-module github.com/Zulbukharov/kalkancrypt-wrapper
+module github.com/Zulbukharov/GoKalkan
 
 go 1.17
 

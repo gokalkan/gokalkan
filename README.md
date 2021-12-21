@@ -1,8 +1,6 @@
-# GoKalkan [WIP]
+# GoKalkan
 
 GoKalkan - это библиотека-обертка над KalkanCrypt для Golang.
-
-### KalkanCrypt
 
 KalkanCrypt - это набор библиотек для шифрования, дешифрования данных.
 
@@ -69,6 +67,85 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/e
 
 Это переменная нужна для динамического обращения к библиотеке KalkanCrypt.
 
+
+## Примеры
+
+Начнем с загрузки сертификатов (можно ЭЦП, который начинается с `RSA...`):
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kalkan "github.com/Zulbukharov/GoKalkan"
+)
+
+var (
+	// certPath хранит путь к сертификату 
+	certPath = "test_cert/GOSTKNCA.p12"
+
+	// certPassword пароль
+	// P.S. никогда не храните пароли в коде
+	certPassword = "Qwerty12"
+)
+
+func main() {
+	cli, err := kalkan.NewClient()
+	if err != nil {
+		log.Fatal("NewClient", err)
+	}
+	// Обязательно закрывайте клиент, иначе приведет утечкам ресурсов
+	defer cli.Close()
+
+	// Подгружаем сертификат с паролем
+	if err := cli.LoadKeyStore(certPassword, certPath); err != nil {
+		log.Fatal("cli.LoadKeyStore", err)
+	}
+}
+```
+
+### Подпись XML документа
+
+Для того чтобы подписать XML документ, нужно передать документ в виде строки:
+
+```go
+signedXML, err := cli.SignXML("<root>GoKalkan</root>")
+
+fmt.Println("Подписанный XML", signedXML)
+fmt.Println("Ошибка", err)
+```
+
+### Проверка подписи на XML документе
+
+Проверка подписи документа вернет ошибку, если документ подписан неверно либо срок
+у сертификата с которым подписан истёк.
+
+```go
+serial, err := cli.VerifyXML(signedXML)
+
+fmt.Println("Серийный номер", serial)
+fmt.Println("Ошибка", err)
+```
+
+## Для чего эта библиотека
+
+GoKalkan можно использовать для:
+- подписывания XML документов c помощью ЭЦП
+- реализовывания авторизации через ЭЦП
+- подпись документов для гос. сервисов
+
+GoKalkan не является библиотекой для подписывания XML документов на SmartBridge.
+
+## Особенности
+
+Библиотека GoKalkan не работает мультипоточно, т.е. нельзя использовать один 
+экземпляр между горутинами. Это объясняется тем, что код CGO работает в отдельном 
+потоке thread.
+
+Для того, чтобы использовать между горутинами, следует передавать по каналу заранее
+запущенным горутинам, которые принимают запросы на выполнение операции с GoKalkan.
 
 ## License
 
