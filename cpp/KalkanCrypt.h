@@ -290,8 +290,6 @@ int KC_DECL KC_GetFunctionList(stKCFunctionsType **KCfunc);
 #define CERT_LENGTH 32768
 //---------------------------------------------------------------------------------------
 
-// #ifdef __cplusplus
-// }
-// #endif
+stKCFunctionsType *kc_funcs;
 
 #endif

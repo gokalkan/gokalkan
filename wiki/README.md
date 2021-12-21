@@ -1,25 +1,29 @@
-# kalkan description WIP
+# Kalkan Description [WIP]
 
-auth_rsa: p12 file digital certificate PKCS#12
-contains private and public key
-information about the owner (name, email address, IIN, etc)
+P12 file (auth_rsa) digital certificate (PKCS#12) contains:
+- private and public key,
+- information about the owner (name, email address, IIN, etc.)
+
 
 ```bash
-openssl pkcs12 -info -in auth_rsa*
-keytool -list -v -keystore AUTH_RSA256_1b35daaa4410dcc89c887375bd75dcbb77f8f4d3.p12 -storepass
+openssl pkcs12 -info -in file.p12
+keytool -list -v -keystore file.p12 -storepass
 ```
 
-openssl cli usage - https://gist.github.com/dreikanter/c7e85598664901afae03fedff308736b
-p12 file extension explained - https://findanyanswer.com/what-is-a-p12-file-used-for
-ssl cert explained - https://www.virtues.it/2015/07/ssl-certificates-explained/
-common commands with openssl - https://www.sslshopper.com/article-most-common-openssl-commands.html
-pkcs12 obtain flow - http://itdoc.hitachi.co.jp/manuals/3021/30213B6100e/ITSD0055.HTM
-demo ncalayer - https://ncalayer-react.netlify.app/
-digital signature realisation review - https://ct.kz/hall-of-fame-eds/vmpgovkz/
-digital signature formats - https://habr.com/ru/company/aktiv-company/blog/191866/
-SIGN WUTH PRIVATE KEY - https://gist.github.com/ezimuel/3cb601853db6ebc4ee49
+## References
 
-when info is used ->
+- [Openssl CLI usage](https://gist.github.com/dreikanter/c7e85598664901afae03fedff308736b)
+- [P12 file extension explained](https://findanyanswer.com/what-is-a-p12-file-used-for)
+- [SSL cert explained](https://www.virtues.it/2015/07/ssl-certificates-explained/)
+- [Common commands with openssl](https://www.sslshopper.com/article-most-common-openssl-commands.html)
+- [PKCS12 obtain flow](http://itdoc.hitachi.co.jp/manuals/3021/30213B6100e/ITSD0055.HTM)
+- [Demo NCAlayer](https://ncalayer-react.netlify.app/)
+- [Digital signature realisation review](https://ct.kz/hall-of-fame-eds/vmpgovkz/)
+- [Digital signature formats](https://habr.com/ru/company/aktiv-company/blog/191866/)
+- [Sign with private key](https://gist.github.com/ezimuel/3cb601853db6ebc4ee49)
+
+<!-- when info is used -->
+```
 Certificate:
     Data:
         Version: 3 (0x2)
@@ -71,39 +75,52 @@ Certificate:
 
     Signature Algorithm: sha256WithRSAEncryption
          ***
+```
 
-
-alice generates private key
-alice generates CSR (certificate signing request)
-alice sends CSR to CA
-CA encrypts CSR with private key and creates CER
-Bob receives CER from public repo
-Bob checks validity of CER and encrypts with CER
+1. alice generates private key
+2. alice generates CSR (certificate signing request)
+3. alice sends CSR to CA
+4. CA encrypts CSR with private key and creates CER
+5. Bob receives CER from public repo
+6. Bob checks validity of CER and encrypts with CER
 
 https://www.virtues.it/2015/07/ssl-certificates-explained/
 
 
-commands
+## Commands
 
-private key
-public key
-certificate - public key + data
-p12 - private key + certificate
+- private key
+- public key
+- certificate = public key + data
+- p12 = private key + certificate
 
-> get info about p12 file
+
+### Get info about p12 file
+
+```sh
 openssl pkcs12 -info -in RSA256_113eeea2c5812cb1d63e93d6ab8b0b02805c7fbb.p12
+```
 
+### Extract private key from p12 file
 
-> extract private key from p12 file
+```sh
 openssl pkcs12 -in ../*.p12 -out privatekey.pem -nodes -nocerts
+```
 
-> generate public key using private key
+### Generate public key using private key
+
+```sh
 openssl rsa -in privatekey.pem -outform PEM -pubout -out public.pem
+```
 
+### Get public key from cert file
 
-> get public key from cert file
+```sh
 openssl x509 -pubkey -noout -in cert.cert  > pubkey.pem
+```
 
-> read so file functions
+### Read so file functions
+```sh
 readelf -Ws libkalkancryptwr-64.so
 ldd /usr/bin/openssl
+```
