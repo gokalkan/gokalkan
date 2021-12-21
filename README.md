@@ -57,7 +57,13 @@ sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 sudo cp -r kalkancrypt /opt/
 ```
 
-#### 5. LD_LIBRARY_PATH
+#### 5. Настроить права доступа `/opt/kalkancrypt`
+
+```sh
+sudo chmod -R 555 /opt/kalkancrypt
+```
+
+#### 6. LD_LIBRARY_PATH
 
 При обращении к GoKalkan убедитесь что экспортирована переменная окружения
 
