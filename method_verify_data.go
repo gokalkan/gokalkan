@@ -11,8 +11,13 @@ import "C"
 import "unsafe"
 
 const (
-	OutCertLength       = 64768
+	// OutCertLength is the length for the cert returned from verification
+	OutCertLength = 64768
+
+	// OutVerifyInfoLength is the length for the cert info returned from verification
 	OutVerifyInfoLength = 64768
+
+	// OutVerifyDataLength is the length for the data returned from verification
 	OutVerifyDataLength = 28000
 )
 
