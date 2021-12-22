@@ -8,13 +8,14 @@ package kalkan
 //     return kc_funcs->SignXML(alias, flags, inData, inDataLength, outSign, outSignLength, signNodeId, parentSignNode, parentNameSpace);
 // }
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // SignXML подписывает данные в формате XML
 func (cli *Client) SignXML(data string) (string, error) {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
-
 	flag := 0
 
 	inData := C.CString(data)
@@ -34,6 +35,9 @@ func (cli *Client) SignXML(data string) (string, error) {
 	parentNameSpace := C.CString("")
 	defer C.free(unsafe.Pointer(parentNameSpace))
 
+	cli.mu.Lock()
+	defer cli.mu.Unlock()
+
 	rc := (int)(C.signXML(
 		alias,
 		(C.int)(flag),
@@ -45,6 +49,7 @@ func (cli *Client) SignXML(data string) (string, error) {
 		parentSignNode,
 		parentNameSpace,
 	))
+
 	signedXML := C.GoString((*C.char)(outSign))
 
 	return signedXML, cli.returnErr(rc)

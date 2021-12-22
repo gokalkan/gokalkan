@@ -23,6 +23,9 @@ func (cli *Client) LoadKeyStore(password, containerPath string) error {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
+	cli.mu.Lock()
+	defer cli.mu.Unlock()
+
 	rc := (int)(C.loadKeyStore(
 		(C.int)(storage),
 		Cpassword,

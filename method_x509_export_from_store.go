@@ -20,6 +20,9 @@ func (cli *Client) X509ExportCertificateFromStore() (string, error) {
 	alias := C.CString("")
 	defer C.free(unsafe.Pointer(alias))
 
+	cli.mu.Lock()
+	defer cli.mu.Unlock()
+
 	rc := (int)(C.x509ExportCertificateFromStore(
 		alias,
 		(C.int)(flag),

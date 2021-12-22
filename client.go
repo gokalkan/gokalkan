@@ -1,6 +1,8 @@
 package kalkan
 
 import (
+	"sync"
+
 	"github.com/Zulbukharov/GoKalkan/pkg/dlopen"
 )
 
@@ -10,6 +12,7 @@ var dynamicLibs = []string{"libkalkancryptwr-64.so"}
 // Client структура для взаимодействия с библиотекой Kalkan
 type Client struct {
 	handler *dlopen.LibHandle
+	mu      sync.Mutex
 }
 
 // NewClient возвращает клиента для работы с Kalkan

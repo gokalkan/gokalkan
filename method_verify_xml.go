@@ -29,6 +29,9 @@ func (cli *Client) VerifyXML(xml string) (string, error) {
 	outVerifyInfo := C.malloc((C.ulong)(C.sizeof_char * outVerifyInfoLen))
 	defer C.free(outVerifyInfo)
 
+	cli.mu.Lock()
+	defer cli.mu.Unlock()
+
 	rc := (int)(C.verifyXML(
 		alias,
 		(C.int)(flags),

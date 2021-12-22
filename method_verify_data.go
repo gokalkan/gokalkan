@@ -54,6 +54,9 @@ func (cli *Client) VerifyData(data string) (*VerifiedData, error) {
 	var outCert [OutCertLength]byte
 	outCertLen := OutCertLength
 
+	cli.mu.Lock()
+	defer cli.mu.Unlock()
+
 	rc := (int)(C.verifyData(
 		alias,
 		(C.int)(flag),
