@@ -32,4 +32,5 @@ func main() {
 	serial, err := cli.VerifyXML(xml)
 	fmt.Println("serial", serial)
 	fmt.Println("err", err)
+
 }
