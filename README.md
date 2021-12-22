@@ -146,12 +146,7 @@ GoKalkan не является библиотекой для подписыва�
 
 ## Особенности
 
-Библиотека GoKalkan не работает мультипоточно, т.е. нельзя использовать один 
-экземпляр между горутинами. Это объясняется тем, что код CGO работает в отдельном 
-потоке thread.
-
-Для того, чтобы использовать между горутинами, следует передавать по каналу заранее
-запущенным горутинам, которые принимают запросы на выполнение операции с GoKalkan.
+Библиотека GoKalkan может работать мультипоточно. Вызовы методов являются concurrency-safe.
 
 ## Contributors ✨
 
@@ -161,9 +156,17 @@ Cпасибо за помощь в развитии проекта:
 <!-- markdownlint-disable -->
 
 <table>
-  <tr>
-    <td align="center"><a href="https://github.com/atlekbai"><img src="https://avatars.githubusercontent.com/u/29381624?v=4&s=100" width="100px;" alt=""/><br /><sub><b>Tlekbai Ali</b></sub></a><br /><a href="https://github.com/Zulbukharov/GoKalkan/commits?author=atlekbai" title="Code">💻</a><a href="https://github.com/Zulbukharov/GoKalkan/tree/master/examples/sign_and_verify" title="Examples">💡</a><a href="https://github.com/Zulbukharov/GoKalkan/search?q=test&type=commits&author=atlekbai" title="Tests">⚠️</a><a href="#" title="Documentation">📖</a></td>
-    </tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/atlekbai">
+				<img src="https://avatars.githubusercontent.com/u/29381624?v=4&s=100" width="100px;" alt=""/><br />
+				<sub><b>Tlekbai Ali</b></sub>
+			</a><br />
+			<a href="https://github.com/Zulbukharov/GoKalkan/commits?author=atlekbai" title="Code">💻</a>
+			<a href="https://github.com/Zulbukharov/GoKalkan/tree/master/examples/sign_and_verify" title="Examples">💡</a>
+			<a href="https://github.com/Zulbukharov/GoKalkan/search?q=test&type=commits&author=atlekbai" title="Tests">⚠️</a><a href="#" title="Documentation">📖</a>
+		</td>
+	</tr>
 </table>
 
 <!-- markdownlint-restore -->
