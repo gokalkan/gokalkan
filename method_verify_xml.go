@@ -14,6 +14,8 @@ import (
 	"unsafe"
 )
 
+var serialNumRegExp = regexp.MustCompile(`serialNumber=.*`)
+
 // VerifyXML обеспечивает проверку подписи данных в формате XML
 func (cli *Client) VerifyXML(xml string) (string, error) {
 	alias := C.CString("")
@@ -50,8 +52,7 @@ func (cli *Client) VerifyXML(xml string) (string, error) {
 }
 
 func extractSerialNumber(info string) string {
-	re := regexp.MustCompile(`serialNumber=.*`)
-	f := re.FindAllString(info, 1)
+	f := serialNumRegExp.FindAllString(info, 1)
 	if len(f) == 1 {
 		return strings.Replace(f[0], "serialNumber=", "", 1)
 	}
