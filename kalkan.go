@@ -6,6 +6,7 @@ type Kalkan interface {
 	LoadKeyStore(password, containerPath string) error
 	SignXML(data string) (string, error)
 	SignWSSE(data string) (string, error)
+	SignData(data string) (string, error)
 	VerifyXML(xml string) (string, error)
 	VerifyData(data string) (*VerifiedData, error)
 	X509ExportCertificateFromStore() (string, error)
