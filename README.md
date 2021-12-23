@@ -7,7 +7,7 @@ GoKalkan - это библиотека-обертка над KalkanCrypt для 
 
 KalkanCrypt - это набор библиотек для шифрования, дешифрования данных.
 
-Основные методы KalkanCrypt реализованы в `libkalkancryptwr-64`. Это файл доступными методами 
+Основные методы KalkanCrypt реализованы в `libkalkancryptwr-64`. Это файл доступными методами
 для подписания файлов, текста используя ЭЦП. Подробнее про PKI можно почитать [здесь](wiki/README.md).
 
 ## Доступный функционал
@@ -18,6 +18,8 @@ type Kalkan interface {
 	Init() error
 	LoadKeyStore(password, containerPath string) error
 	SignXML(data string) (string, error)
+	SignWSSE(data string) (string, error)
+	SignData(data string) (string, error)
 	VerifyXML(xml string) (string, error)
 	VerifyData(data string) (*VerifiedData, error)
 	X509ExportCertificateFromStore() (string, error)
@@ -50,7 +52,7 @@ SDK представляет собой набор библиотек для Jav
 sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 ```
 
-#### 4. Скопировать `kalkancrypt`  в `/opt/`
+#### 4. Скопировать `kalkancrypt` в `/opt/`
 
 `kalkancrypt` - представляет набор из общих библиотек и состоит из файлов расширения `.so`.
 
@@ -76,7 +78,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/e
 
 Это переменная нужна для динамического обращения к библиотеке KalkanCrypt.
 
-
 ## Установка
 
 Версия Go 1.17+
@@ -84,7 +85,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/e
 ```sh
 go get github.com/Zulbukharov/GoKalkan
 ```
-
 
 ## Примеры
 
@@ -101,7 +101,7 @@ import (
 )
 
 var (
-	// certPath хранит путь к сертификату 
+	// certPath хранит путь к сертификату
 	certPath = "test_cert/GOSTKNCA.p12"
 
 	// certPassword пароль
@@ -162,6 +162,7 @@ fmt.Println("Ошибка", err)
 ## Для чего эта библиотека
 
 GoKalkan можно использовать для:
+
 - подписывания XML документов c помощью ЭЦП
 - реализовывания авторизации через ЭЦП
 - подпись документов для гос. сервисов
@@ -185,15 +186,14 @@ go test -bench SignXML -run=^$ -benchmem
 - goarch: amd64
 - cpu: Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz
 
-
 | Бенчмарк           | Кол-во циклов | Средн. время выполнения | Средн. потребление ОЗУ | Средн. кол-во аллокаций |
 | ------------------ | ------------- | ----------------------- | ---------------------- | ----------------------- |
 | BenchmarkSignXML-6 | 2809          | 422310 ns/op            | 2792 B/op              | 8 allocs/op             |
 
-
 ## Contributors ✨
 
 Cпасибо за помощь в развитии проекта:
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -223,9 +223,7 @@ The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukh
 
 Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancrypt-wrapper/blob/master/LICENSE.md) for more details.
 
-
 [pkg-img]: https://pkg.go.dev/badge/Zulbukharov/GoKalkan
 [pkg-url]: https://pkg.go.dev/github.com/Zulbukharov/GoKalkan
 [reportcard-img]: https://goreportcard.com/badge/Zulbukharov/GoKalkan
 [reportcard-url]: https://goreportcard.com/report/Zulbukharov/GoKalkan
-
