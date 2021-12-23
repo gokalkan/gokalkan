@@ -2,47 +2,28 @@ package kalkan
 
 import (
 	_ "embed"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/require"
 )
 
 var (
 	certPath = "test_cert/GOSTKNCA.p12"
 	//go:embed test_cert/password.txt
 	certPassword string
+	cli          Kalkan
 )
 
-type KalkanSuite struct {
-	suite.Suite
-	cli Kalkan
+func TestX509ExportCertificateFromStore(t *testing.T) {
+	cert, err := cli.X509ExportCertificateFromStore()
+	require.NoError(t, err, "Error on X509ExportCertificateFromStore")
+	require.NotEmpty(t, cert, "Cert on X509ExportCertificateFromStore")
 }
 
-func (ks *KalkanSuite) SetupTest() {
-	cli, err := NewClient()
-	if err != nil {
-		ks.T().Error("NewClient", err)
-	}
-	if err := cli.LoadKeyStore(certPassword, certPath); err != nil {
-		ks.T().Error("cli.LoadKeyStore", err)
-	}
-	ks.cli = cli
-}
-
-func (ks *KalkanSuite) TearDownTest() {
-	if err := ks.cli.Close(); err != nil {
-		ks.T().Error("cli.Close", err)
-	}
-}
-
-func (ks *KalkanSuite) TestX509ExportCertificateFromStore() {
-	cert, err := ks.cli.X509ExportCertificateFromStore()
-	ks.Require().NoError(err, "Error on X509ExportCertificateFromStore")
-	ks.Require().NotEmpty(cert, "Cert on X509ExportCertificateFromStore")
-}
-
-func (ks *KalkanSuite) TestSignXML() {
+func TestSignXML(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       string
@@ -63,15 +44,15 @@ func (ks *KalkanSuite) TestSignXML() {
 		},
 	}
 	for _, ts := range tests {
-		ks.T().Run(ts.name, func(t *testing.T) {
-			xml, err := ks.cli.SignXML(ts.input)
-			expectError(ks.Assert(), "SignXML", ts.expError, err)
-			expectEmpty(ks.Assertions, "SignXML", ts.expEmptyXML, xml)
+		t.Run(ts.name, func(t *testing.T) {
+			xml, err := cli.SignXML(ts.input)
+			expectError(assert.New(t), "SignXML", ts.expError, err)
+			expectEmpty(assert.New(t), "SignXML", ts.expEmptyXML, xml)
 		})
 	}
 }
 
-func (ks *KalkanSuite) TestVerifyXML() {
+func TestVerifyXML(t *testing.T) {
 	tests := []struct {
 		name        string
 		rawXML      string
@@ -84,27 +65,47 @@ func (ks *KalkanSuite) TestVerifyXML() {
 			rawXML:      "<root>GoKalkan</root>",
 			editSigned:  func(s string) string { return s },
 			expError:    true,
-			expEmptyXML: false,
+			expEmptyXML: true,
 		},
 	}
 	for _, ts := range tests {
-		ks.T().Run(ts.name, func(t *testing.T) {
-			xml, err := ks.cli.SignXML(ts.rawXML)
+		t.Run(ts.name, func(t *testing.T) {
+			xml, err := cli.SignXML(ts.rawXML)
 			expErrOnSign := false
 			expEmptyXMLOnSign := false
-			expectError(ks.Assert(), "SignXML", expErrOnSign, err)
-			expectEmpty(ks.Assertions, "SignXML", expEmptyXMLOnSign, xml)
+			expectError(assert.New(t), "SignXML", expErrOnSign, err)
+			expectEmpty(assert.New(t), "SignXML", expEmptyXMLOnSign, xml)
 
 			data := ts.editSigned(xml)
-			serialNum, err := ks.cli.VerifyXML(data)
-			expectError(ks.Assert(), "VerifyXML", ts.expError, err)
-			expectEmpty(ks.Assert(), "VerifyXML", ts.expEmptyXML, serialNum)
+			serialNum, err := cli.VerifyXML(data)
+			expectError(assert.New(t), "VerifyXML", ts.expError, err)
+			expectEmpty(assert.New(t), "VerifyXML", ts.expEmptyXML, serialNum)
 		})
 	}
 }
 
-func TestKalkan(t *testing.T) {
-	suite.Run(t, new(KalkanSuite))
+func TestMain(m *testing.M) {
+	setupTest()
+	code := m.Run()
+	tearDownTest()
+	os.Exit(code)
+}
+
+func setupTest() {
+	tmpCli, err := NewClient()
+	if err != nil {
+		log.Fatal("NewClient", err)
+	}
+	if err := tmpCli.LoadKeyStore(certPassword, certPath); err != nil {
+		log.Fatal("cli.LoadKeyStore", err)
+	}
+	cli = tmpCli
+}
+
+func tearDownTest() {
+	if err := cli.Close(); err != nil {
+		log.Fatal("cli.Close", err)
+	}
 }
 
 func expectError(as *assert.Assertions, name string, expErr bool, err error) bool {
