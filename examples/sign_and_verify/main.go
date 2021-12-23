@@ -17,12 +17,12 @@ var (
 func main() {
 	cli, err := kalkan.NewClient()
 	if err != nil {
-		log.Fatal("NewClient", err)
+		log.Fatal("NewClient: ", err)
 	}
 	defer cli.Close()
 
 	if err := cli.LoadKeyStore(certPassword, certPath); err != nil {
-		log.Fatal("cli.LoadKeyStore", err)
+		log.Fatal("cli.LoadKeyStore: ", err)
 	}
 
 	xml, err := cli.SignXML("<root>GoKalkan</root>")
