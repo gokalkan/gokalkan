@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	// KC_SIGN_CMS | KC_IN_BASE64 | KC_OUT_BASE6
+	// SignBase64 обозначает флаги: KC_SIGN_CMS | KC_IN_BASE64 | KC_OUT_BASE6
 	SignBase64 = 2066
 )
 

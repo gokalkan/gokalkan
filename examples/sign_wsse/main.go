@@ -25,11 +25,7 @@ func main() {
 		log.Fatal("cli.LoadKeyStore: ", err)
 	}
 
-	xml, err := cli.SignXML("<root>GoKalkan</root>")
+	xml, err := cli.SignWSSE("<root>GoKalkan</root>")
 	fmt.Println("xml", xml)
-	fmt.Println("err", err)
-
-	serial, err := cli.VerifyXML(xml)
-	fmt.Println("serial", serial)
 	fmt.Println("err", err)
 }
