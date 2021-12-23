@@ -28,7 +28,7 @@ type Kalkan interface {
 
 Не все доступные методы пока были реализованы. Для знакомства со всеми функциями перейти [сюда](cpp/KalkanCrypt.h).
 
-## Запуск
+## Перед установкой
 
 Чтобы использовать библиотеку требуется провести подготовку:
 
@@ -75,6 +75,15 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/e
 ```
 
 Это переменная нужна для динамического обращения к библиотеке KalkanCrypt.
+
+
+## Установка
+
+Версия Go 1.17+
+
+```sh
+go get github.com/Zulbukharov/GoKalkan
+```
 
 
 ## Примеры
