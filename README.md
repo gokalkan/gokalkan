@@ -1,5 +1,8 @@
 # GoKalkan
 
+[![pkg-img]][pkg-url]
+[![reportcard-img]][reportcard-url]
+
 GoKalkan - это библиотека-обертка над KalkanCrypt для Golang.
 
 KalkanCrypt - это набор библиотек для шифрования, дешифрования данных.
@@ -179,4 +182,10 @@ Cпасибо за помощь в развитии проекта:
 The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukharov).
 
 Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancrypt-wrapper/blob/master/LICENSE.md) for more details.
+
+
+[pkg-img]: https://pkg.go.dev/badge/Zulbukharov/GoKalkan
+[pkg-url]: https://pkg.go.dev/github.com/Zulbukharov/GoKalkan
+[reportcard-img]: https://goreportcard.com/badge/Zulbukharov/GoKalkan
+[reportcard-url]: https://goreportcard.com/report/Zulbukharov/GoKalkan
 
