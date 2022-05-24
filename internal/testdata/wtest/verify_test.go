@@ -1,8 +1,9 @@
 package wtest
 
 import (
-	gokalkan "github.com/Zulbukharov/GoKalkan"
 	"testing"
+
+	"github.com/gokalkan/gokalkan"
 )
 
 func TestVerifyCertNothing(t *testing.T) {

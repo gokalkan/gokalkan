@@ -3,8 +3,9 @@ package wtest
 import (
 	"encoding/json"
 	"fmt"
-	gokalkan "github.com/Zulbukharov/GoKalkan"
 	"testing"
+
+	"github.com/gokalkan/gokalkan"
 )
 
 func TestGetCertFromStore(t *testing.T) {

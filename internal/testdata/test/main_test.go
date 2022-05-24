@@ -2,12 +2,13 @@ package test
 
 import (
 	"fmt"
-	gokalkan "github.com/Zulbukharov/GoKalkan"
 	"os"
 	"testing"
 
-	"github.com/Zulbukharov/GoKalkan/internal/testdata"
-	"github.com/Zulbukharov/GoKalkan/internal/testdata/test/certs"
+	"github.com/gokalkan/gokalkan"
+
+	"github.com/gokalkan/gokalkan/internal/testdata"
+	"github.com/gokalkan/gokalkan/internal/testdata/test/certs"
 )
 
 //nolint:gochecknoglobals

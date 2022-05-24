@@ -3,7 +3,7 @@ package certs
 import (
 	_ "embed"
 
-	"github.com/Zulbukharov/GoKalkan/internal/testdata"
+	"github.com/gokalkan/gokalkan/internal/testdata"
 )
 
 //go:embed gost1.p12

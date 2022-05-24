@@ -2,11 +2,12 @@ package wtest
 
 import (
 	"fmt"
-	gokalkan "github.com/Zulbukharov/GoKalkan"
 	"os"
 	"testing"
 
-	"github.com/Zulbukharov/GoKalkan/internal/testdata/wtest/certs"
+	"github.com/gokalkan/gokalkan"
+
+	"github.com/gokalkan/gokalkan/internal/testdata/wtest/certs"
 )
 
 //nolint:gochecknoglobals

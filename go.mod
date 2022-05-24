@@ -1,3 +1,3 @@
-module github.com/Zulbukharov/GoKalkan
+module github.com/gokalkan/gokalkan
 
 go 1.17
