@@ -14,13 +14,15 @@ KalkanCrypt - это набор библиотек для шифрования, 
 
 Чтобы использовать библиотеку требуется провести подготовку:
 
-1. Обратиться в [pki.gov.kz](https://pki.gov.kz/developers/) чтобы получить SDK. Он представляет из себя набор библиотек для Java и C.
+#### 1. Обратиться в [pki.gov.kz](https://pki.gov.kz/developers/) чтобы получить SDK.
 
-2. Установить CA сертификаты.
+SDK представляет из себя набор библиотек для Java и C.
+
+#### 2. Установить CA сертификаты.
 
 Сертификаты лежат по пути `SDK/C/Linux/ca-certs/Ubuntu`. Будут два типа сертификатов - `production` и `test`. В папке будут скрипты для установки сертификатов, понадобятся sudo права.
 
-3. Скопировать `libkalkancryptwr-64.so` и `libkalkancryptwr-64.so.1.1.0` в `/usr/lib/`
+#### 3. Скопировать `.so` файлы
 
 Файлы лежат в директории `SDK/C/Linux/C`. Команда для копирования:
 
@@ -28,23 +30,23 @@ KalkanCrypt - это набор библиотек для шифрования, 
 sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 ```
 
-4. Скопировать `kalkancrypt` в `/opt/`.
+#### 4. Скопировать `kalkancrypt` в `/opt/`.
 
 `kalkancrypt` - это набор из общих библиотек и состоит из файлов расширения `.so` (англ. "shared object").
 
-Скопируйте папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`
+Скопируйте папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`:
 
 ```sh
 sudo cp -r kalkancrypt /opt/
 ```
 
-5. Настроить права доступа `/opt/kalkancrypt`.
+#### 5. Настроить права доступа `/opt/kalkancrypt`.
 
 ```sh
 sudo chmod -R 555 /opt/kalkancrypt
 ```
 
-6. Переменная окружения `LD_LIBRARY_PATH`
+#### 6. Переменная окружения `LD_LIBRARY_PATH`
 
 При использовании `gokalkan` убедитесь, что экспортирована переменная окружения:
 
