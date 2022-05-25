@@ -102,10 +102,10 @@ func main() {
 	if err != nil {
 		log.Fatal("new kalkan client create error", err)
 	}
-	// Обязательно закрывайте клиент, иначе приведет утечкам ресурсов
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
 	defer cli.Close()
 
-	// Подгружаем сертификат с паролем
+	// Подгружаем хранилище с паролем
 	err = cli.LoadKeyStore(certPath, certPassword)
 	if err != nil {
 		log.Fatal("load key store error", err)
