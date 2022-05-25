@@ -1,11 +1,11 @@
-# GoKalkan
+# gokalkan
 
 [![pkg-img]][pkg-url]
 [![reportcard-img]][reportcard-url]
 
 <img src="https://user-images.githubusercontent.com/29381624/170255957-56b2c349-c04f-4ec8-9054-78bbe351fcc8.png" width=100>
 
-Пакет `gokalkan` является оберткой над нативным методам библиотеки KalkanCrypt.
+Пакет `gokalkan` является оберткой над нативными методами библиотеки KalkanCrypt.
 
 KalkanCrypt является основной библиотекой для работы с ЭЦП ключами от pki.gov.kz и
 позволяет подписывать, верифицировать, вытаскивать данные и много чего другого связанного
@@ -22,15 +22,15 @@ KalkanCrypt является основной библиотекой для ра
 
 Чтобы использовать библиотеку требуется провести подготовку:
 
-#### 1. Обратиться в [pki.gov.kz](https://pki.gov.kz/developers/) чтобы получить SDK.
+#### 1. Получить SDK
 
-SDK представляет из себя набор библиотек для Java и C.
+Обратиться в [pki.gov.kz](https://pki.gov.kz/developers/) чтобы получить SDK. SDK представляет из себя набор библиотек для Java и C.
 
-#### 2. Установить CA сертификаты.
+#### 2. Установить CA сертификаты
 
-Сертификаты лежат по пути `SDK/C/Linux/ca-certs/Ubuntu`. Будут два типа сертификатов - `production` и `test`. В папке будут скрипты для установки сертификатов, понадобятся sudo права.
+Сертификаты лежат по пути `SDK/C/Linux/ca-certs/Ubuntu`. В папке находятся два типа сертификатов - `production` и `test`. Для их установки приготовлены скрипты в той же директории. При запуске понадобятся sudo права.
 
-#### 3. Скопировать `.so` файлы
+#### 3. Скопировать .so файлы
 
 Файлы лежат в директории `SDK/C/Linux/C`. Команда для копирования:
 
@@ -38,7 +38,7 @@ SDK представляет из себя набор библиотек для 
 sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 ```
 
-#### 4. Скопировать `kalkancrypt` в `/opt/`.
+#### 4. Скопировать kalkancrypt
 
 Скопировать папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`:
 
@@ -46,13 +46,13 @@ sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 sudo cp -r kalkancrypt /opt/
 ```
 
-#### 5. Настроить права доступа `/opt/kalkancrypt`.
+#### 5. Настроить права доступа kalkancrypt
 
 ```sh
 sudo chmod -R 555 /opt/kalkancrypt
 ```
 
-#### 6. Переменная окружения `LD_LIBRARY_PATH`
+#### 6. Установить переменную окружения
 
 При использовании `gokalkan` убедитесь, что экспортирована переменная окружения:
 
