@@ -141,11 +141,11 @@ fmt.Println("Ошибка", err)
 
 ### Подпись XML документа для SmartBridge
 
-Для того чтобы подписать XML документ в формате SignWSSE, нужно передать документ в виде строки.
-Функция обернет документ в `soap:Envelope` и запишет внутри `soap:Body`.
+Для того чтобы подписать XML документ в формате SignWSSE, нужно передать документ в виде строки
+и id для SOAP Body. Функция обернет документ в `soap:Envelope` и запишет внутри `soap:Body`.
 
 ```go
-signedXML, err := cli.SignWSSE("<root>GoKalkan</root>")
+signedXML, err := cli.SignWSSE("<root>gokalkan</root>", "12345")
 
 fmt.Println("Подписанный XML в формате WSSE", signedXML)
 fmt.Println("Ошибка", err)
@@ -169,7 +169,7 @@ go test -bench SignXML -run=^$ -benchmem
 | ------------------ | ------------- | ----------------------- | ---------------------- | ----------------------- |
 | BenchmarkSignXML-6 | 2809          | 422310 ns/op            | 2792 B/op              | 8 allocs/op             |
 
-## Contributors ✨
+## Контрибьютеры ✨
 
 Cпасибо за помощь в развитии проекта:
 
@@ -180,18 +180,28 @@ Cпасибо за помощь в развитии проекта:
 <table>
 	<tr>
 		<td align="center">
-			<a href="https://github.com/atlekbai">
-				<img src="https://avatars.githubusercontent.com/u/29381624?v=4&s=100" width="100px;" alt=""/><br />
-				<sub><b>Tlekbai Ali</b></sub>
+			<a href="https://github.com/Zulbukharov">
+				<img src="https://avatars.githubusercontent.com/u/25000090?v=4" width="100px;" alt=""/>
 			</a><br />
-			<a href="https://github.com/gokalkan/gokalkan/commits?author=atlekbai" title="Code">💻</a>
+			<a href="https://github.com/gokalkan/gokalkan/commits?author=Zulbukharov" title="Code">
+				<sub><b>Zulbukharov Abylaikhan</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/atlekbai">
+				<img src="https://avatars.githubusercontent.com/u/29381624?v=4&s=100" width="100px;" alt=""/>
+			</a><br />
+			<a href="https://github.com/gokalkan/gokalkan/commits?author=atlekbai" title="Code">
+				<sub><b>Tlekbai Ali</b></sub>
+			</a>
 		</td>
 		<td align="center">
 			<a href="https://github.com/gammban">
-				<img src="https://avatars.githubusercontent.com/u/98373125?v=4s=100" width="100px;" alt=""/><br />
-				<sub><b>Kilibayev Azat</b></sub>
+				<img src="https://avatars.githubusercontent.com/u/98373125?v=4&s=100" width="100px;" alt=""/>
 			</a><br />
-			<a href="https://github.com/gokalkan/gokalkan/commits?author=gammban" title="Code">💻</a>
+			<a href="https://github.com/gokalkan/gokalkan/commits?author=gammban" title="Code">
+				<sub><b>Kilibayev Azat</b></sub>
+			</a>
 		</td>
 	</tr>
 </table>
@@ -201,7 +211,7 @@ Cпасибо за помощь в развитии проекта:
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## License
+## Лицензия
 
 The MIT License (MIT) 2021 - [Abylaikhan Zulbukharov](https://github.com/Zulbukharov).
 
