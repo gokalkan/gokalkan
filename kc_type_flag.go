@@ -1,5 +1,6 @@
 package gokalkan
 
+// KCFlag представляет собой флаги для KalcanCrypt
 type KCFlag int
 
 const (
@@ -16,7 +17,7 @@ const (
 	KCFlagOutDER          KCFlag = 1024   // Выходные данные в кодировке DER
 	KCFlagOutBase64       KCFlag = 2048   // Выходные данные в кодировке BASE64
 	KCFlagProxyOff        KCFlag = 4096   // Отключить использование прокси-сервера и стереть настройки.
-	KCFlagProxyOn         KCFlag = 8192   //  Включить и установить настройки прокси-сервера (адрес и порт)
+	KCFlagProxyOn         KCFlag = 8192   // Включить и установить настройки прокси-сервера (адрес и порт)
 	KCFlagProxyAuth       KCFlag = 16384  // Прокси-сервер требует авторизацию (логин/пароль)
 	KCFlagInFile          KCFlag = 32768  // Использовать, если параметр inData/outData содержит абсолютный путь к файлу
 	KCFlagNoCheckCertTime KCFlag = 65536  // Не проверять срок действия сертификата при построении цепочки до корневого (для проверки старых подписей с просроченным сертификатом)

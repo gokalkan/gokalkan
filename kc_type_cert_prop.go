@@ -1,6 +1,7 @@
 package gokalkan
 
-type KCCertProp int // Значение поля/расширения в запросе/сертификате
+// KCCertProp определяет значение поля/расширения в запросе/сертификате
+type KCCertProp int
 
 // Константы, определяющие значение поля/расширения в запросе/сертификате.
 const (
@@ -24,7 +25,7 @@ const (
 	KCCertPropSubjectDc           KCCertProp = 2066 // Доменный компонент субъекта
 	KCCertPropNotBefore           KCCertProp = 2067 // Дата действителен с
 	KCCertPropNotAfter            KCCertProp = 2068 // Дата действителен по
-	KCCertPropKeyUsage            KCCertProp = 2069 //  Использование ключа
+	KCCertPropKeyUsage            KCCertProp = 2069 // Использование ключа
 	KCCertPropExtKeyUsage         KCCertProp = 2070 // Расширенное использование ключа
 	KCCertPropAuthKeyID           KCCertProp = 2071 // Идентификатор ключа центра сертификации
 	KCCertPropSubjKeyID           KCCertProp = 2072 // Идентификатор ключа субъекта

@@ -1,6 +1,7 @@
 package gokalkan
 
-type KCStoreType int // вид хранилища/носителя.
+// KCStoreType представляет собой вид хранилища/носителя.
+type KCStoreType int
 
 const (
 	KCStoreTypePKCS12     KCStoreType = 1   // Файловая система

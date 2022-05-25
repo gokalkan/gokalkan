@@ -32,7 +32,7 @@ type soapBody struct {
 }
 
 // WrapWithWSSESoapEnvelope оборачивает XML документ в SOAP формат, а точнее записывает
-// в содержимое под тегом soap:Body
+// содержимое под тегом soap:Body
 func WrapWithWSSESoapEnvelope(dataXML, id string) (result string) {
 	envelope := soapEnvelope{
 		SOAP: xmlnsSOAP,

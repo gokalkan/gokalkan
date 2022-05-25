@@ -1,6 +1,7 @@
 package gokalkan
 
-type KCCertType int // Принадлежность сертификата
+// KCCertType определяет принадлежность сертификата
+type KCCertType int
 
 // Константы, определяющие принадлежность сертификата
 const (

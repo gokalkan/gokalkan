@@ -13,7 +13,7 @@ import (
 	"unsafe"
 )
 
-// KCGetCertificatesList Обеспечивает получение списка сертификатов в виде строки и их количество.
+// KCGetCertificatesList обеспечивает получение списка сертификатов в виде строки и их количество.
 func (cli *KCClient) KCGetCertificatesList() (certs string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
