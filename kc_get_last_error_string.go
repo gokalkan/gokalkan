@@ -12,7 +12,7 @@ import (
 	"unsafe"
 )
 
-// errLength длина строки с ошибкой возвращаемая от KalkanCrypt
+// длина строки с ошибкой возвращаемая от KalkanCrypt
 const errLength = 65534
 
 // KCGetLastErrorString возвращает текст последней ошибки

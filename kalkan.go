@@ -51,7 +51,7 @@ type KC interface {
 	KCClose() error
 }
 
-// dynamicLib is a required lib for KC
+// требуемая библиотека для KC
 const dynamicLibs = "libkalkancryptwr-64.so"
 
 var _ KC = (*KCClient)(nil)

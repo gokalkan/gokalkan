@@ -13,7 +13,7 @@ import (
 	"unsafe"
 )
 
-// KCGetCertFromCMS Обеспечивает получение сертификата из CMS.
+// KCGetCertFromCMS обеспечивает получение сертификата из CMS.
 func (cli *KCClient) KCGetCertFromCMS(cms string, flag KCFlag) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {

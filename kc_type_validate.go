@@ -1,6 +1,6 @@
 package gokalkan
 
-// KCValidateType - это тип валидации
+// KCValidateType - это тип валидации сертификата
 type KCValidateType int
 
 // Константы, определяющие тип валидации

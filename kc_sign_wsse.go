@@ -14,7 +14,8 @@ import (
 )
 
 // KCSignWSSE подписывает документ XML в формате WSSec, который требутся для SmartBridge.
-//  Параметры:
+//
+// Параметры:
 //  xml - строка XML.
 //  alias - label (alias) сертификата.
 //  flags - флаги.

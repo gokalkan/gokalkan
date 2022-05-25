@@ -13,7 +13,7 @@ import (
 	"unsafe"
 )
 
-// KCGetTokens Обеспечивает получение указателя на строку подключенных устройств типа storage и их количество.
+// KCGetTokens обеспечивает получение указателя на строку подключенных устройств типа storage и их количество.
 func (cli *KCClient) KCGetTokens(store KCStoreType) (tokens string, err error) {
 	defer func() {
 		if r := recover(); r != nil {

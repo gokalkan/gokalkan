@@ -1,6 +1,7 @@
 package gokalkan
 
-type KCCertCodeType int // Тип кодировки
+// KCCertCodeType определяет тип кодировки
+type KCCertCodeType int
 
 // Константы, определяющие тип кодировки
 const (
