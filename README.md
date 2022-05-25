@@ -3,12 +3,20 @@
 [![pkg-img]][pkg-url]
 [![reportcard-img]][reportcard-url]
 
-GoKalkan - это библиотека-обертка над KalkanCrypt для Golang.
+<img src="https://user-images.githubusercontent.com/29381624/170255957-56b2c349-c04f-4ec8-9054-78bbe351fcc8.png" width=100>
 
-KalkanCrypt - это набор библиотек для шифрования, дешифрования данных.
+Пакет `gokalkan` является оберткой над нативным методам библиотеки KalkanCrypt.
 
-Основные методы KalkanCrypt реализованы в `libkalkancryptwr-64`. Это файл доступными методами
-для подписания файлов, текста используя ЭЦП. Подробнее про PKI можно почитать [здесь](wiki/README.md).
+KalkanCrypt является основной библиотекой для работы с ЭЦП ключами от pki.gov.kz и
+позволяет подписывать, верифицировать, вытаскивать данные и много чего другого связанного
+с электронными подписями, цифровыми сертификатами и ключами.
+
+Особенности пакета `gokalkan`:
+
+- Поддержка мультипоточности
+- Без зависимостей
+- Чистый код
+- Напрямую вызывает нативные методы KalkanCrypt
 
 ## Перед использованием
 
@@ -32,9 +40,7 @@ sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
 
 #### 4. Скопировать `kalkancrypt` в `/opt/`.
 
-`kalkancrypt` - это набор из общих библиотек и состоит из файлов расширения `.so` (англ. "shared object").
-
-Скопируйте папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`:
+Скопировать папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`:
 
 ```sh
 sudo cp -r kalkancrypt /opt/
@@ -136,12 +142,6 @@ signedXML, err := cli.SignWSSE("<root>GoKalkan</root>")
 fmt.Println("Подписанный XML в формате WSSE", signedXML)
 fmt.Println("Ошибка", err)
 ```
-
-## Особенности
-
-Библиотека GoKalkan может работать мультипоточно. Вызовы методов являются concurrency-safe.
-
-Нет зависимостей - zero dependency.
 
 ## Бенчмарки
 
