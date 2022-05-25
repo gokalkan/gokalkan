@@ -13,20 +13,22 @@ import (
 	"unsafe"
 )
 
-// KCX509ValidateCertificate - осуществляет проверку сертификата: проверка срока действия, построение цепочки сертификатов, проверка отозванности по OCSP или CRL.
-//  Если validateType:
-//  - KCValidateTypeCRL - в параметр path необходимо указывать путь к файлу crl.
-//  Например:
-//  X509ValidateCertificate(gostCert, KCValidateTypeCRL, "/tmp/nca_gost.crl")
+// KCX509ValidateCertificate - осуществляет проверку сертификата: проверка срока действия,
+// построение цепочки сертификатов, проверка отозванности по OCSP или CRL.
+// Если validateType:
 //
-//  - KCValidateTypeOCSP - в параметр path необходимо указывать url OCSP. По умолчанию передается url http://ocsp.pki.gov.kz.
-//  Например:
-//  X509ValidateCertificate(gostCert, KCValidateTypeOCSP)
-//  X509ValidateCertificate(gostCert, KCValidateTypeOCSP, "http://ocsp.pki.gov.kz")
+// - KCValidateTypeCRL - в параметр path необходимо указывать путь к файлу crl.
+// 	 Например:
+//		X509ValidateCertificate(gostCert, KCValidateTypeCRL, "/tmp/nca_gost.crl")
 //
-//  - KCValidateTypeNothing - не производятся проверки по CRL или OCSP. Параметр path игнорируется.
-//  Например:
-//  X509ValidateCertificate(gostCert, KCValidateTypeNothing, "")
+// - KCValidateTypeOCSP - в параметр path необходимо указывать url OCSP. По умолчанию передается url http://ocsp.pki.gov.kz.
+//   Например:
+//		X509ValidateCertificate(gostCert, KCValidateTypeOCSP)
+//		X509ValidateCertificate(gostCert, KCValidateTypeOCSP, "http://ocsp.pki.gov.kz")
+//
+// - KCValidateTypeNothing - не производятся проверки по CRL или OCSP. Параметр path игнорируется.
+// 	 Например:
+//		X509ValidateCertificate(gostCert, KCValidateTypeNothing, "")
 func (cli *KCClient) KCX509ValidateCertificate(inCert string, validateType KCValidateType, validatePath string) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {

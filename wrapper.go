@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// Kalkan обертки над методами KC.
+// Kalkan - это обертка над методами KalkanCrypt (KC)
 type Kalkan interface {
 	LoadCertsGOST(ctx context.Context) (err error)
 	LoadCertsRSA(ctx context.Context) (err error)
@@ -55,11 +55,11 @@ type Client struct {
 func NewClient(opts ...Option) (*Client, error) {
 	o := Options{log: defaultLogger}
 
+	o.setDefaults()
+
 	for _, op := range opts {
 		op(&o)
 	}
-
-	o.setDefaults()
 
 	o.log.Debug("---------kalkan-config-------------")
 	o.log.Debug("Load CA certs on init: ", o.LoadCACertsOnInit)

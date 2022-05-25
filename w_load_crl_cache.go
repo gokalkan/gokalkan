@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// LoadCRLCache загружает crl в кэш. Если время жизни кэша истекло, удаляет старые файлы и загружает новые.
+// LoadCRLCache загружает CRL в кэш. Если время жизни кэша истекло, удаляет старые файлы и загружает новые.
 // Время жизни можно устанавливать в опциях при создании клиента WithCRLCacheDuration.
 func (cli *Client) LoadCRLCache(ctx context.Context) (err error) {
 	cli.mu.Lock()

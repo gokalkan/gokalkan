@@ -66,7 +66,7 @@ go get github.com/gokalkan/gokalkan
 
 ## Примеры
 
-Начнем с загрузки сертификатов (можно ЭЦП, который начинается с `RSA...`):
+Загрузка сертификатов (можно ЭЦП ключ, который начинается с `RSA...`):
 
 ```go
 package main
@@ -75,7 +75,7 @@ import (
 	"fmt"
 	"log"
 
-	kalkan "github.com/gokalkan/gokalkan"
+	"github.com/gokalkan/gokalkan"
 )
 
 var (
@@ -88,7 +88,7 @@ var (
 )
 
 func main() {
-	cli, err := kalkan.NewClient()
+	cli, err := kalkan.gokalkan()
 	if err != nil {
 		log.Fatal("NewClient", err)
 	}

@@ -1,6 +1,8 @@
 package gokalkan
 
-// KeyUser - Пользователь ключа (По этому параметру можно определить, держатель сертификата (ключа) является юр. лицом или нет)
+// KeyUser - это пользователь ключа. По этому параметру можно определить:
+// - держателя сертификата (ключа)
+// - является юр. лицом или нет
 type KeyUser string
 
 const (
@@ -13,7 +15,7 @@ const (
 	KeyUserHR                            KeyUser = "HR"                 // Сотрудник отдела кадров, наделенный правом подтверждать заявки на выпуск регистрационных свидетельств поданные от сотрудников юридического лица
 	KeyUserEmployee                      KeyUser = "EMPLOYEE"           // Сотрудник организации
 	KeyUserNCAPrivileges                 KeyUser = "NCA_PRIVILEGES"     // Полномочия в информационной системе НУЦ РК
-	KeyUserNCAAdmin                      KeyUser = "NCA_ADMIN"          //  Администратор НУЦ РК
+	KeyUserNCAAdmin                      KeyUser = "NCA_ADMIN"          // Администратор НУЦ РК
 	KeyUserNCAManager                    KeyUser = "NCA_MANAGER"        // Менеджер НУЦ РК
 	KeyUserNCAOperator                   KeyUser = "NCA_OPERATOR"       // Оператор НУЦ РК
 	KeyUserIdentification                KeyUser = "IDENTIFICATION"
