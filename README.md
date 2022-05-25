@@ -70,9 +70,9 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/e
 go get github.com/gokalkan/gokalkan
 ```
 
-## Примеры
+## Загрузка хранилища PKCS12
 
-Загрузка сертификатов (можно ЭЦП ключ, который начинается с `RSA...`):
+Загрузка хранилища с ключом и сертификатом (например ЭЦП ключ, который начинается с `RSA...`):
 
 ```go
 package main
@@ -85,28 +85,36 @@ import (
 )
 
 var (
-	// certPath хранит путь к сертификату
-	certPath = "test_cert/GOSTKNCA.p12"
+	certPath = "test_cert/GOSTKNCA.p12" // путь к хранилищу
 
-	// certPassword пароль
+	certPassword = "Qwerty12" // пароль
 	// P.S. никогда не храните пароли в коде
-	certPassword = "Qwerty12"
 )
 
 func main() {
-	cli, err := kalkan.gokalkan()
+	// для теста
+	opts := gokalkan.OptsTest
+
+	// для прода
+	// opts := gokalkan.OptsProd
+
+	cli, err = gokalkan.NewClient(opts...)
 	if err != nil {
-		log.Fatal("NewClient", err)
+		log.Fatal("new kalkan client create error", err)
 	}
 	// Обязательно закрывайте клиент, иначе приведет утечкам ресурсов
 	defer cli.Close()
 
 	// Подгружаем сертификат с паролем
-	if err := cli.LoadKeyStore(certPassword, certPath); err != nil {
-		log.Fatal("cli.LoadKeyStore", err)
+	err = cli.LoadKeyStore(certPath, certPassword)
+	if err != nil {
+		log.Fatal("load key store error", err)
 	}
 }
 ```
+
+Следует отметить, что при инициализации gokalkan клиента нужно указывать опцию.
+Есть две опции - `OptsTest` и `OptsProd`. Нужно выбрать одну из них в зависимости от окружения.
 
 ### Подпись XML документа
 
