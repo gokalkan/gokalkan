@@ -20,5 +20,6 @@ resource/
 config.yml
 .DS_Store
 tmp_main
-internal/testdata/prod/
-internal/testdata/deploy/
+internal/lib
+internal/ca-prod
+internal/ca-production
