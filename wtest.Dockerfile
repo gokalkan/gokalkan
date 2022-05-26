@@ -12,12 +12,14 @@ ARG DEPS=" \
     libpcsclite-dev \
     zlib1g-dev \
     libltdl7 \
+    curl \
     "
 RUN apt-get update && apt-get install -y ${DEPS}
 
 # install golang
 ARG GO_VERSION=1.17.10
-RUN curl -L https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go${GO_VERSION}.linux-amd64.tar.gz
+
+RUN curl -sL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go${GO_VERSION}.linux-amd64.tar.gz
 RUN tar -C /usr/local -xzf /tmp/go${GO_VERSION}.linux-amd64.tar.gz && rm /tmp/go${GO_VERSION}.linux-amd64.tar.gz
 
 # golang config
@@ -39,8 +41,7 @@ COPY ${CA_DIRECTORY}/*.pem /etc/ssl/certs/
 RUN update-ca-certificates
 
 # install kalkan libs
-COPY ./internal/lib/libkalkancryptwr-64.so /usr/lib/
-COPY ./internal/lib/libkalkancryptwr-64.so.1.1.1 /usr/lib/
+COPY ./internal/lib/libkalkancryptwr-64.so* /usr/lib/
 COPY ./internal/lib/kalkancrypt /opt/kalkancrypt/
 ENV LD_LIBRARY_PATH=/opt/kalkancrypt:/opt/kalkancrypt/lib/engines:$LD_LIBRARY_PATH
 
