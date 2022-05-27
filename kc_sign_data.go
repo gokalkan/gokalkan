@@ -16,6 +16,7 @@ import (
 )
 
 const (
+	TestBase64        = KCFlagInBase64 | KCFlagSignCMS
 	SignBase64        = KCFlagSignCMS | KCFlagInBase64 | KCFlagOutBase64
 	SignBase64WithTSP = KCFlagSignCMS | KCFlagInBase64 | KCFlagOutBase64 | KCFlagWithTimestamp
 )

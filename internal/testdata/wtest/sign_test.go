@@ -7,7 +7,7 @@ import (
 func TestSignCMSB64(t *testing.T) {
 	data := "dGVzdA=="
 
-	gotSignedData, err := cli.SignCMSB64(data)
+	gotSignedData, err := cli.SignCMSB64(data, false)
 	if err != nil {
 		t.Fatalf("%s: %s", key.Alias, err)
 	}
