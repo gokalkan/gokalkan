@@ -23,4 +23,5 @@ tmp_main
 internal/lib
 internal/ca-prod
 internal/ca-production
+internal/ca-test
 internal/cmd
