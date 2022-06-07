@@ -16,13 +16,12 @@ import (
 )
 
 const (
-	TestBase64        = KCFlagInBase64 | KCFlagSignCMS
 	SignBase64        = KCFlagSignCMS | KCFlagInBase64 | KCFlagOutBase64
 	SignBase64WithTSP = KCFlagSignCMS | KCFlagInBase64 | KCFlagOutBase64 | KCFlagWithTimestamp
 )
 
 // KCSignData используется для подписи текста в формате base64
-func (cli *KCClient) KCSignData(data, alias string, flag KCFlag) (result string, err error) {
+func (cli *KCClient) KCSignData(inSign, inData, alias string, flag KCFlag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -37,35 +36,28 @@ func (cli *KCClient) KCSignData(data, alias string, flag KCFlag) (result string,
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 
-	cAlias := C.CString(alias)
+	kcAlias := C.CString(alias)
+	defer C.free(unsafe.Pointer(kcAlias))
 
-	defer C.free(unsafe.Pointer(cAlias))
-
-	inData := C.CString(data)
-
-	defer C.free(unsafe.Pointer(inData))
-
-	inDataLength := len(data)
+	kcInData := C.CString(inData)
+	defer C.free(unsafe.Pointer(kcInData))
+	inDataLength := len(inData)
 
 	outSignLength := 50000 + 2*inDataLength
-
 	outSign := C.malloc(C.ulong(C.sizeof_uchar * outSignLength))
-
 	defer C.free(outSign)
 
-	inSignLength := 50000 + 2*inDataLength
-
-	inSign := C.malloc(C.ulong(C.sizeof_uchar * inSignLength))
-
-	defer C.free(inSign)
+	kcInSignLength := len(inSign)
+	kcInSign := unsafe.Pointer(C.CString(inSign))
+	defer C.free(kcInSign)
 
 	rc := int(C.signData(
-		cAlias,
+		kcAlias,
 		C.int(int(flag)),
-		inData,
+		kcInData,
 		C.int(inDataLength),
-		(*C.uchar)(inSign),
-		C.int(inSignLength),
+		(*C.uchar)(kcInSign),
+		C.int(kcInSignLength),
 		(*C.uchar)(outSign),
 		(*C.int)(unsafe.Pointer(&outSignLength)),
 	))

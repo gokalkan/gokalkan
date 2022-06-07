@@ -21,8 +21,9 @@ type Kalkan interface {
 	SignXML(dataXML string) (signedXML string, err error)
 	VerifyXML(signedXML string) (result string, err error)
 
-	SignCMSB64(dataB64 string, withTSP bool) (signedCMSB64 string, err error)
-	VerifyCMSB64(signedCMSB64 string) (result *VerifiedData, err error)
+	SignCMSB64(signB64, dataB64 string, withTSP bool) (signedCMSB64 string, err error)
+	SignDetachedCMSB64(signB64, dataB64 string, withTSP bool) (signedCMSB64 string, err error)
+	VerifyCMSB64(signedCMSB64, dataB64 string) (result *VerifiedData, err error)
 
 	SignWSSE(dataXML, id string) (signedXML string, err error)
 
