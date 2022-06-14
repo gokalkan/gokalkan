@@ -99,57 +99,39 @@ func NewClient(opts ...Option) (*Client, error) {
 		c:   c,
 	}
 
-	cli.log.Debug("kc init...")
-
 	err = cli.kc.KCInit()
 	if err != nil {
 		cli.log.Error("kc init error: ", err)
 		return nil, fmt.Errorf("%w: %s", ErrInit, err)
 	}
-	cli.log.Debug("kc init OK")
-	cli.log.Debug("setting TSP: ", cli.o.TSP)
 	cli.kc.KCTSASetURL(cli.o.TSP)
 
 	if cli.o.Proxy != nil {
-		cli.log.Debug("setting proxy: ", cli.o.Proxy.Hostname())
-
 		er := cli.kc.KCSetProxy(KCFlagProxyOn, cli.o.Proxy)
 		if er != nil {
 			cli.log.Error("setting proxy error: ", er)
 		}
-
-		cli.log.Debug("setting proxy OK")
 	}
 
 	if cli.o.LoadCACertsOnInit {
 		var er error
 
-		cli.log.Debug("loading CA certs RSA...")
 		er = cli.LoadCertsRSA(context.Background())
 		if er != nil {
 			cli.log.Error("load CA certs RSA error: ", er)
 		}
 
-		cli.log.Debug("load CA certs RSA OK")
-		cli.log.Debug("loading CA certs GOST...")
-
 		er = cli.LoadCertsGOST(context.Background())
 		if er != nil {
 			cli.log.Error("load CA certs GOST error: ", er)
 		}
-
-		cli.log.Debug("load CA certs GOST OK")
 	}
 
 	if cli.o.LoadCRLCacheOnInit {
-		cli.log.Debug("loading CRL cache...")
-
 		er := cli.LoadCRLCache(context.Background())
 		if er != nil {
 			cli.log.Error("load CRL cache error: ", er)
 		}
-
-		cli.log.Debug("load CRL cache OK")
 	}
 
 	return cli, nil

@@ -19,9 +19,9 @@ func TestGetCertFromStore(t *testing.T) {
 		t.Fatal(key.Alias, err)
 	}
 
-	b, _ := json.MarshalIndent(info, "", "\t")
+	json.MarshalIndent(info, "", "\t")
 
-	t.Log(key.Alias, string(b))
+	// t.Log(key.Alias, string(b))
 
 	if gotCrt != key.Cert {
 		fmt.Printf("\ngot cert: \n<<<%s>>>\n", gotCrt)
@@ -49,16 +49,16 @@ func TestGetCertInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b, _ := json.MarshalIndent(res, "", "\t")
-	t.Log(string(b))
+	json.MarshalIndent(res, "", "\t")
+	// t.Log(string(b))
 
 	info, err := res.GetX509()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	b, _ = json.MarshalIndent(info, "", "\t")
-	t.Log(string(b))
+	json.MarshalIndent(info, "", "\t")
+	// t.Log(string(b))
 
 	if info.KeyUsage != gokalkan.KeyUsageSign {
 		t.Fatal("mismatch")

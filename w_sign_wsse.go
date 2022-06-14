@@ -7,7 +7,7 @@ import (
 )
 
 func (cli *Client) SignWSSE(dataXML, id string) (signedXML string, err error) {
-	return cli.kc.KCSignWSSE(WrapWithWSSESoapEnvelope(dataXML, id), "", 0, "")
+	return cli.kc.KCSignWSSE(WrapWithWSSESoapEnvelope(dataXML, id), "", 0, id)
 }
 
 const (
@@ -38,7 +38,7 @@ func WrapWithWSSESoapEnvelope(dataXML, id string) (result string) {
 		SOAP: xmlnsSOAP,
 		WSU:  xmlnsWSU,
 		Body: soapBody{
-			ID:      fmt.Sprintf("id-%s", id),
+			ID:      fmt.Sprintf("%s", id),
 			Content: replaceKey,
 		},
 	}

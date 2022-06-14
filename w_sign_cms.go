@@ -4,17 +4,16 @@ package gokalkan
 func (cli *Client) SignCMSB64(data string, withTSP bool) (signedCMSB64 string, err error) {
 	signType := SignBase64
 	if withTSP {
-		signType = SignBase64WithTSP
+		signType |= KCFlagWithTimestamp
 	}
-	return cli.kc.KCSignData(data, "", "", signType)
+	return cli.kc.KCSignData("", data, "", signType)
 }
 
 // SignDetachedCMSB64 подписывает данные в base64 и возвращает отделенную подпись.
 func (cli *Client) SignDetachedCMSB64(data string, withTSP bool) (signedCMSB64 string, err error) {
-	signType := SignBase64
+	signType := SignBase64 | KCFlagDetachedData
 	if withTSP {
-		signType = SignBase64WithTSP
+		signType |= KCFlagWithTimestamp
 	}
-	signType |= KCFlagDetachedData
 	return cli.kc.KCSignData(data, "", "", signType)
 }
