@@ -72,6 +72,8 @@ func NewClient(opts ...Option) (*Client, error) {
 	o.log.Debug("CRL RSA url: ", o.CRLRSA)
 	o.log.Debug("CA GOST url: ", o.CACertGOST)
 	o.log.Debug("CA RSA url: ", o.CACertRSA)
+	o.log.Debug("NCA RSA url: ", o.NcaCertGOST)
+	o.log.Debug("NCA RSA url: ", o.NcaCertRSA)
 
 	kc, err := NewKCClient()
 	if err != nil {

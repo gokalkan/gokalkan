@@ -1,6 +1,8 @@
 package gokalkan
 
-import "context"
+import (
+	"context"
+)
 
 // VerifyCert - осуществляет проверку сертификата:
 // - проверка срока действия,

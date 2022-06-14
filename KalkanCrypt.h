@@ -265,8 +265,7 @@ typedef struct stKCFunctions {
 	unsigned long(*SignData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inSign, int inSignLen, unsigned char *outSign, int *outSignLength);
 	unsigned long(*SignXML)(char *alias, int flags, char *inData, int inDataLength, unsigned char *outSign, int *outSignLength, char *signNodeId, char *parentSignNode, char *parentNameSpace);
 
-	unsigned long(*VerifyData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inoutSign, int inoutSignLength, 
-		char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength);
+	unsigned long(*VerifyData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength);
 	unsigned long(*VerifyXML)(char *alias, int flags, char *inData, int inDataLength, char *outVerifyInfo, int *outVerifyInfoLen);
 
 	unsigned long(*KC_getCertFromXML)(const char* inXML, int inXMLLength, int inSignID, char *outCert, int *outCertLength);

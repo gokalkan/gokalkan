@@ -4,8 +4,8 @@ package gokalkan
 // #include <dlfcn.h>
 // #include "KalkanCrypt.h"
 //
-// unsigned long verifyData(char *alias, int flags, char *inData, int inDataLength, char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
-//    return kc_funcs->VerifyData(alias, flags, inData, inDataLength, (unsigned char*)inoutSign, inoutSignLength, outData, outDataLen, outVerifyInfo, outVerifyInfoLen, inCertID, outCert, outCertLength);
+// unsigned long verifyData(char *alias, int flags, char *inData, int inDataLength, unsigned char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
+//    return kc_funcs->VerifyData(alias, flags, inData, inDataLength, inoutSign, inoutSignLength, outData, outDataLen, outVerifyInfo, outVerifyInfoLen, inCertID, outCert, outCertLength);
 // }
 import "C"
 import (
@@ -26,9 +26,9 @@ const (
 
 // VerifiedData структура возвращаемая от метода KCVerifyData
 type VerifiedData struct {
-	Cert string
-	Info string
-	Data string
+	Cert []byte
+	Info []byte
+	Data []byte
 }
 
 // KCVerifyData обеспечивает проверку подписи
@@ -54,8 +54,8 @@ func (cli *KCClient) KCVerifyData(inSign, inData, alias string, flag KCFlag) (re
 	defer C.free(unsafe.Pointer(kcInData))
 	inDataLength := len(inData)
 
-	kcInSign := C.CString(inSign)
-	defer C.free(unsafe.Pointer(kcInSign))
+	kcInSign := unsafe.Pointer(C.CString(inSign))
+	defer C.free(kcInSign)
 	inputSignLength := len(inSign)
 
 	var kcOutData [outDataLength]byte
@@ -74,7 +74,7 @@ func (cli *KCClient) KCVerifyData(inSign, inData, alias string, flag KCFlag) (re
 		C.int(flag),
 		kcInData,
 		C.int(inDataLength),
-		kcInSign,
+		(*C.uchar)(kcInSign),
 		C.int(inputSignLength),
 		(*C.char)(unsafe.Pointer(&kcOutData)),
 		(*C.int)(unsafe.Pointer(&kcOutDataLen)),
@@ -91,10 +91,19 @@ func (cli *KCClient) KCVerifyData(inSign, inData, alias string, flag KCFlag) (re
 	}
 
 	result = &VerifiedData{
-		Cert: string(kcOutCert[:]),
-		Info: string(kcOutVerifyInfo[:]),
-		Data: string(kcOutData[:]),
+		Cert: byteSlice(kcOutCert[:]),
+		Info: byteSlice(kcOutVerifyInfo[:]),
+		Data: byteSlice(kcOutData[:]),
 	}
 
 	return result, nil
+}
+
+func byteSlice(content []byte) []byte {
+	for i, v := range content {
+		if v == 0 {
+			return content[:i]
+		}
+	}
+	return content
 }
