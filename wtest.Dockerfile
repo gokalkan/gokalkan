@@ -33,7 +33,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # install CA certs
-ARG CA_DIRECTORY=./internal/ca-production
+ARG CA_DIRECTORY=./internal/ca-test
 
 RUN mkdir /usr/local/share/ca-certificates/extra
 COPY ${CA_DIRECTORY}/*.crt /usr/local/share/ca-certificates/extra/
