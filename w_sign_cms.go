@@ -15,5 +15,5 @@ func (cli *Client) SignDetachedCMSB64(data string, withTSP bool) (signedCMSB64 s
 	if withTSP {
 		signType |= KCFlagWithTimestamp
 	}
-	return cli.kc.KCSignData(data, "", "", signType)
+	return cli.kc.KCSignData("", data, "", signType)
 }
