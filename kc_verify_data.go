@@ -4,8 +4,8 @@ package gokalkan
 // #include <dlfcn.h>
 // #include "KalkanCrypt.h"
 //
-// unsigned long verifyData(char *alias, int flags, char *inData, int inDataLength, char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
-//    return kc_funcs->VerifyData(alias, flags, inData, inDataLength, (unsigned char*)inoutSign, inoutSignLength, outData, outDataLen, outVerifyInfo, outVerifyInfoLen, inCertID, outCert, outCertLength);
+// unsigned long verifyData(char *alias, int flags, char *inData, int inDataLength, unsigned char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength) {
+//    return kc_funcs->VerifyData(alias, flags, inData, inDataLength, inoutSign, inoutSignLength, outData, outDataLen, outVerifyInfo, outVerifyInfoLen, inCertID, outCert, outCertLength);
 // }
 import "C"
 import (
@@ -21,18 +21,18 @@ const (
 	outVerifyInfoLength = 64768
 
 	// длина данных возвращаемая от проверки
-	outVerifyDataLength = 28000
+	outDataLength = 28000
 )
 
 // VerifiedData структура возвращаемая от метода KCVerifyData
 type VerifiedData struct {
-	Cert string
-	Info string
-	Data string
+	Cert []byte
+	Info []byte
+	Data []byte
 }
 
 // KCVerifyData обеспечивает проверку подписи
-func (cli *KCClient) KCVerifyData(data, alias string, flag KCFlag) (result *VerifiedData, err error) {
+func (cli *KCClient) KCVerifyData(inSign, inData, alias string, flag KCFlag) (result *VerifiedData, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -47,50 +47,42 @@ func (cli *KCClient) KCVerifyData(data, alias string, flag KCFlag) (result *Veri
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 
-	cAlias := C.CString(alias)
+	kcAlias := C.CString(alias)
+	defer C.free(unsafe.Pointer(kcAlias))
 
-	defer C.free(unsafe.Pointer(cAlias))
+	kcInData := C.CString(inData)
+	defer C.free(unsafe.Pointer(kcInData))
+	inDataLength := len(inData)
 
-	inData := C.CString(data)
+	kcInSign := unsafe.Pointer(C.CString(inSign))
+	defer C.free(kcInSign)
+	inputSignLength := len(inSign)
 
-	defer C.free(unsafe.Pointer(inData))
+	var kcOutData [outDataLength]byte
+	kcOutDataLen := outDataLength
 
-	inDataLength := 0
+	var kcOutVerifyInfo [outVerifyInfoLength]byte
+	kcOutVerifyInfoLen := outVerifyInfoLength
 
-	inputSign := C.CString("")
+	kcInCertID := 0
 
-	defer C.free(unsafe.Pointer(inputSign))
-
-	inputSignLength := 0
-
-	var outVerifyData [outVerifyDataLength]byte
-
-	outVerifyDataLen := outVerifyDataLength
-
-	var outVerifyInfo [outVerifyInfoLength]byte
-
-	outVerifyInfoLen := outVerifyInfoLength
-
-	inCertID := 0
-
-	var outCert [outCertLength]byte
-
-	outCertLen := outCertLength
+	var kcOutCert [outCertLength]byte
+	kcOutCertLen := outCertLength
 
 	rc := int(C.verifyData(
-		cAlias,
+		kcAlias,
 		C.int(flag),
-		inData,
+		kcInData,
 		C.int(inDataLength),
-		inputSign,
+		(*C.uchar)(kcInSign),
 		C.int(inputSignLength),
-		(*C.char)(unsafe.Pointer(&outVerifyData)),
-		(*C.int)(unsafe.Pointer(&outVerifyDataLen)),
-		(*C.char)(unsafe.Pointer(&outVerifyInfo)),
-		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
-		C.int(inCertID),
-		(*C.char)(unsafe.Pointer(&outCert)),
-		(*C.int)(unsafe.Pointer(&outCertLen)),
+		(*C.char)(unsafe.Pointer(&kcOutData)),
+		(*C.int)(unsafe.Pointer(&kcOutDataLen)),
+		(*C.char)(unsafe.Pointer(&kcOutVerifyInfo)),
+		(*C.int)(unsafe.Pointer(&kcOutVerifyInfoLen)),
+		C.int(kcInCertID),
+		(*C.char)(unsafe.Pointer(&kcOutCert)),
+		(*C.int)(unsafe.Pointer(&kcOutCertLen)),
 	))
 
 	err = cli.wrapError(rc)
@@ -99,10 +91,19 @@ func (cli *KCClient) KCVerifyData(data, alias string, flag KCFlag) (result *Veri
 	}
 
 	result = &VerifiedData{
-		Cert: string(outCert[:]),
-		Info: string(outVerifyInfo[:]),
-		Data: string(outVerifyData[:]),
+		Cert: byteSlice(kcOutCert[:]),
+		Info: byteSlice(kcOutVerifyInfo[:]),
+		Data: byteSlice(kcOutData[:]),
 	}
 
 	return result, nil
+}
+
+func byteSlice(content []byte) []byte {
+	for i, v := range content {
+		if v == 0 {
+			return content[:i]
+		}
+	}
+	return content
 }

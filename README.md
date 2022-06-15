@@ -98,7 +98,7 @@ func main() {
 	// для прода
 	// opts := gokalkan.OptsProd
 
-	cli, err = gokalkan.NewClient(opts...)
+	cli, err := gokalkan.NewClient(opts...)
 	if err != nil {
 		log.Fatal("new kalkan client create error", err)
 	}

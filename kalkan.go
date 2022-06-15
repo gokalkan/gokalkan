@@ -28,9 +28,9 @@ type KC interface {
 	KCSignWSSE(xml, alias string, flags KCFlag, signNodeID string) (signedXML string, err error)
 
 	// KCSignData используется для подписи текста в формате base64
-	KCSignData(data string, alias string, flag KCFlag) (string, error)
+	KCSignData(inSign, inData string, alias string, flag KCFlag) (string, error)
 	// KCVerifyData обеспечивает проверку подписи
-	KCVerifyData(data string, alias string, flag KCFlag) (*VerifiedData, error)
+	KCVerifyData(inSign, inData string, alias string, flag KCFlag) (*VerifiedData, error)
 
 	KCGetLastError() KCErrorCode
 	KCGetLastErrorString() (KCErrorCode, string)

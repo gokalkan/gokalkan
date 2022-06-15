@@ -38,7 +38,7 @@ ARG CA_DIRECTORY=./internal/ca-test
 RUN mkdir /usr/local/share/ca-certificates/extra
 COPY ${CA_DIRECTORY}/*.crt /usr/local/share/ca-certificates/extra/
 COPY ${CA_DIRECTORY}/*.pem /etc/ssl/certs/
-RUN update-ca-certificates
+# RUN update-ca-certificates
 
 # install kalkan libs
 COPY ./internal/lib/libkalkancryptwr-64.so* /usr/lib/

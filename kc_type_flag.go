@@ -12,7 +12,7 @@ const (
 	KCFlagIn2Base64       KCFlag = 32     // Дополнительные входные данные в кодировке BASE64
 	KCFlagDetachedData    KCFlag = 64     // Отсоединенная подпись
 	KCFlagWithCert        KCFlag = 128    // Вложить сертификат в подпись
-	KCFlagWithTimestamp   KCFlag = 256    // Добавить в подпись метку времени (не используется в текущей версии)
+	KCFlagWithTimestamp   KCFlag = 256    // Добавить в подпись метку времени
 	KCFlagOutPEM          KCFlag = 512    // Выходные данные в формате PEM
 	KCFlagOutDER          KCFlag = 1024   // Выходные данные в кодировке DER
 	KCFlagOutBase64       KCFlag = 2048   // Выходные данные в кодировке BASE64
