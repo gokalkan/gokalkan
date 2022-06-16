@@ -13,3 +13,15 @@ func (cli *Client) GetCertKeyUsage(certPEM string) (result KeyUsage, err error) 
 
 	return result, nil
 }
+
+// GetCertKeyUsages возвращает свойства о сертификате
+func (cli *Client) GetCertKeyUsages(certPEM string) ([]string, error) {
+	res, err := cli.kc.KCX509CertificateGetInfo(certPEM, KCCertPropKeyUsage)
+	if err != nil {
+		return nil, err
+	}
+
+	ku := strings.Split(strings.TrimSpace(res), " ")
+
+	return ku, nil
+}

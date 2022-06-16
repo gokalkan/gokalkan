@@ -28,6 +28,7 @@ type Kalkan interface {
 
 	GetCertInfo(certPEM string) (result *X509RawInfo, err error)
 	GetCertKeyUsage(certPEM string) (result KeyUsage, err error)
+	GetCertKeyUsages(certPEM string) ([]string, error)
 	GetCertFromCMSB64(signedCMSB64 string) (certPEM string, err error)
 	GetCertFromKeyStore() (certPEM string, err error)
 	Close() error
