@@ -20,5 +20,6 @@ func (cli *Client) GetCertProp(certPEM string, prop KCCertProp) (string, error) 
 	if err != nil {
 		return "", err
 	}
+	res = strings.TrimSpace(res)
 	return res, nil
 }
