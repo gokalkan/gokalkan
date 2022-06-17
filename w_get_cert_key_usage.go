@@ -20,7 +20,7 @@ func (cli *Client) GetCertKeyUsages(certPEM string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	res = strings.TrimPrefix(res, "keyUsage=")
 	ku := strings.Split(strings.TrimSpace(res), " ")
 
 	return ku, nil
