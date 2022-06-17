@@ -14,7 +14,7 @@ import (
 )
 
 // KCGetCertFromCMS обеспечивает получение сертификата из CMS.
-func (cli *KCClient) KCGetCertFromCMS(cms string, flag KCFlag) (cert string, err error) {
+func (cli *KCClient) KCGetCertFromCMS(cms string, signId int, flag KCFlag) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -33,8 +33,6 @@ func (cli *KCClient) KCGetCertFromCMS(cms string, flag KCFlag) (cert string, err
 
 	defer C.free(unsafe.Pointer(cCMS))
 
-	inSignID := 1
-
 	outCertLen := 32768
 
 	outCert := C.malloc(C.ulong(C.sizeof_uchar * outCertLen))
@@ -44,7 +42,7 @@ func (cli *KCClient) KCGetCertFromCMS(cms string, flag KCFlag) (cert string, err
 	rc := int(C.getCertFromCMS(
 		cCMS,
 		C.int(len(cms)),
-		C.int(inSignID),
+		C.int(signId),
 		C.int(int(flag)),
 		(*C.char)(outCert),
 		(*C.int)(unsafe.Pointer(&outCertLen)),
