@@ -26,6 +26,8 @@ type Kalkan interface {
 	VerifyDetachedCMSB64(signedCMSB64, dataB64 string) (result *VerifiedData, err error)
 	VerifyCert(cert string, t KCValidateType, path ...string) (result string, err error)
 
+	HashData(algo KCHashAlgo, dataB64 string) (hashedB64 string, err error)
+
 	GetCertInfo(certPEM string) (result *X509RawInfo, err error)
 	GetCertKeyUsage(certPEM string) (result KeyUsage, err error)
 	GetCertProp(certPEM string, prop KCCertProp) (string, error)

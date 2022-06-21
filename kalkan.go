@@ -31,6 +31,7 @@ type KC interface {
 	KCSignData(inSign, inData string, alias string, flag KCFlag) (string, error)
 	// KCVerifyData обеспечивает проверку подписи
 	KCVerifyData(inSign, inData string, alias string, flag KCFlag) (*VerifiedData, error)
+	KCHashData(algo KCHashAlgo, dataB64 string, flag KCFlag) (result string, err error)
 
 	KCGetLastError() KCErrorCode
 	KCGetLastErrorString() (KCErrorCode, string)
