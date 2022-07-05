@@ -12,19 +12,21 @@ func (cli *Client) Options() Options {
 	return cli.o
 }
 
+type OptionsCert struct {
+	URL  string
+	Type KCCertType
+}
+
 type Options struct {
 	log          Logger
-	TSP          string   `json:"tsp"`            // URL метки времени
-	OCSP         string   `json:"ocsp"`           // URL сервиса онлайн проверки статуса сертификата
-	Proxy        *url.URL `json:"proxy"`          // URL для прокси
-	CACertGOST   string   `json:"ca_cert_gost"`   // URL к сертификату КУЦ
-	CACertRSA    string   `json:"ca_cert_rsa"`    // URL к сертификату КУЦ
-	NcaCertGOST  string   `json:"nca_cert_gost"`  // URL к сертификату НУЦ
-	NcaCertRSA   string   `json:"nca_cert_rsa"`   // URL к сертификату НУЦ
-	CRLGOST      string   `json:"crl_gost"`       // URL базового CRL (GOST)
-	CRLRSA       string   `json:"crl_rsa"`        // URL базового CRL (RSA)
-	CRLDeltaGOST string   `json:"crl_delta_gost"` // URL Дельта CRL (GOST)
-	CRLDeltaRSA  string   `json:"crl_delta_rsa"`  // URL Дельта CRL (RSA)
+	TSP          string        `json:"tsp"`            // URL метки времени
+	OCSP         string        `json:"ocsp"`           // URL сервиса онлайн проверки статуса сертификата
+	Proxy        *url.URL      `json:"proxy"`          // URL для прокси
+	Certs        []OptionsCert `json:"certs"`          // URL к корневым сертификатам
+	CRLGOST      string        `json:"crl_gost"`       // URL базового CRL (GOST)
+	CRLRSA       string        `json:"crl_rsa"`        // URL базового CRL (RSA)
+	CRLDeltaGOST string        `json:"crl_delta_gost"` // URL Дельта CRL (GOST)
+	CRLDeltaRSA  string        `json:"crl_delta_rsa"`  // URL Дельта CRL (RSA)
 	crlCache
 	LoadCRLCacheOnInit bool `json:"load_crl_cache_on_init"`
 	LoadCACertsOnInit  bool `json:"load_ca_certs_on_init"`
@@ -52,20 +54,8 @@ func (o *Options) setDefaults() {
 		o.OCSP = prodOCSP
 	}
 
-	if o.CACertGOST == "" {
-		o.CACertGOST = prodCACertGOST
-	}
-
-	if o.CACertRSA == "" {
-		o.CACertRSA = prodCACertRSA
-	}
-
-	if o.NcaCertGOST == "" {
-		o.NcaCertGOST = prodNcaCertGOST
-	}
-
-	if o.NcaCertRSA == "" {
-		o.NcaCertRSA = prodNcaCertRSA
+	if o.Certs == nil || len(o.Certs) == 0 {
+		o.Certs = prodCerts
 	}
 
 	if o.CRLGOST == "" {
@@ -118,27 +108,15 @@ func WithOCSP(u string) Option {
 	}
 }
 
-func WithCACertGOST(u string) Option {
+func WithCert(url string, typ KCCertType) Option {
 	return func(o *Options) {
-		o.CACertGOST = u
+		o.Certs = append(o.Certs, OptionsCert{url, typ})
 	}
 }
 
-func WithCACertRSA(u string) Option {
+func WithCerts(c []OptionsCert) Option {
 	return func(o *Options) {
-		o.CACertRSA = u
-	}
-}
-
-func WithNcaCertGOST(u string) Option {
-	return func(o *Options) {
-		o.NcaCertGOST = u
-	}
-}
-
-func WithNcaCertRSA(u string) Option {
-	return func(o *Options) {
-		o.NcaCertRSA = u
+		o.Certs = c
 	}
 }
 
@@ -187,10 +165,6 @@ func WithLoadCACertsOnInit(load bool) Option {
 const (
 	prodOCSP             = "http://ocsp.pki.gov.kz"
 	prodTSP              = "http://tsp.pki.gov.kz:80"
-	prodCACertGOST       = "https://pki.gov.kz/cert/root_gost.crt" // КУЦ
-	prodCACertRSA        = "https://pki.gov.kz/cert/root_rsa.crt"  // КУЦ
-	prodNcaCertGOST      = "https://pki.gov.kz/cert/nca_gost.crt"  // НУЦ
-	prodNcaCertRSA       = "https://pki.gov.kz/cert/nca_rsa.crt"   // НУЦ
 	prodCRLGOST          = "https://crl.pki.gov.kz/nca_gost.crl"
 	prodCRLRSA           = "https://crl.pki.gov.kz/nca_rsa.crl"
 	prodCRLDeltaGOST     = "https://crl.pki.gov.kz/nca_d_gost.crl"
@@ -201,10 +175,6 @@ const (
 const (
 	testOCSP             = "http://test.pki.gov.kz/ocsp/"
 	testTSP              = "http://test.pki.gov.kz/tsp/"
-	testCACertGOST       = "http://test.pki.gov.kz/cert/root_gost_test.cer" // КУЦ
-	testCACertRSA        = "http://test.pki.gov.kz/cert/root_rsa_test.cer"  // КУЦ
-	testNcaCertGOST      = "http://test.pki.gov.kz/cert/nca_gost_test.cer"  // НУЦ
-	testNcaCertRSA       = "http://test.pki.gov.kz/cert/nca_rsa_test.cer"   // НУЦ
 	testCRLGOST          = "http://test.pki.gov.kz/crl/nca_gost_test.crl"
 	testCRLRSA           = "http://test.pki.gov.kz/crl/nca_rsa_test.crl"
 	testCRLDeltaGOST     = "http://test.pki.gov.kz/crl/nca_d_gost_test.crl"
@@ -212,15 +182,29 @@ const (
 	testCRLCacheDuration = time.Second * 5
 )
 
+var (
+	prodCerts = []OptionsCert{
+		{URL: "https://pki.gov.kz/cert/root_gost.crt", Type: KCCertTypeCA},
+		{URL: "https://pki.gov.kz/cert/root_rsa.crt", Type: KCCertTypeCA},
+		{URL: "https://pki.gov.kz/cert/root_gost2015_2022.cer", Type: KCCertTypeCA},
+		{URL: "https://pki.gov.kz/cert/nca_gost.crt", Type: KCCertTypeIntermediate},
+		{URL: "https://pki.gov.kz/cert/nca_rsa.crt", Type: KCCertTypeIntermediate},
+		{URL: "https://pki.gov.kz/cert/nca_gost2015.cer", Type: KCCertTypeIntermediate},
+	}
+	testCerts = []OptionsCert{
+		{URL: "http://test.pki.gov.kz/cert/root_gost_test.cer", Type: KCCertTypeCA},
+		{URL: "http://test.pki.gov.kz/cert/root_rsa_test.cer", Type: KCCertTypeCA},
+		{URL: "http://test.pki.gov.kz/cert/nca_gost_test.cer", Type: KCCertTypeIntermediate},
+		{URL: "http://test.pki.gov.kz/cert/nca_rsa_test.cer", Type: KCCertTypeIntermediate},
+	}
+)
+
 //nolint:gochecknoglobals
 var OptsProd = []Option{
 	WithLogger(defaultLogger),
 	WithTSP(prodTSP),
 	WithOCSP(prodOCSP),
-	WithCACertGOST(prodCACertGOST),
-	WithCACertRSA(prodCACertRSA),
-	WithNcaCertGOST(prodNcaCertGOST),
-	WithNcaCertRSA(prodNcaCertRSA),
+	WithCerts(prodCerts),
 	WithCRLGOST(prodCRLGOST),
 	WithCRLRSA(prodCRLRSA),
 	WithCRLDeltaGOST(prodCRLDeltaGOST),
@@ -235,10 +219,7 @@ var OptsTest = []Option{
 	WithLogger(defaultLogger),
 	WithTSP(testTSP),
 	WithOCSP(testOCSP),
-	WithCACertGOST(testCACertGOST),
-	WithCACertRSA(testCACertRSA),
-	WithNcaCertGOST(testNcaCertGOST),
-	WithNcaCertRSA(testNcaCertRSA),
+	WithCerts(testCerts),
 	WithCRLGOST(testCRLGOST),
 	WithCRLRSA(testCRLRSA),
 	WithCRLDeltaGOST(testCRLDeltaGOST),

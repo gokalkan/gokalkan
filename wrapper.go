@@ -11,8 +11,7 @@ import (
 
 // Kalkan - это обертка над методами KalkanCrypt (KC)
 type Kalkan interface {
-	LoadCertsGOST(ctx context.Context) (err error)
-	LoadCertsRSA(ctx context.Context) (err error)
+	LoadCerts(ctx context.Context) (err error)
 	LoadKeyStore(path, password string) (err error)
 	LoadKeyStoreFromBytes(key []byte, password string) (err error)
 
@@ -54,8 +53,9 @@ type Client struct {
 
 // NewClient возвращает клиента для работы с KC.
 func NewClient(opts ...Option) (*Client, error) {
-	o := Options{log: defaultLogger}
+	ctx := context.Background()
 
+	o := Options{log: defaultLogger}
 	o.setDefaults()
 
 	for _, op := range opts {
@@ -70,10 +70,7 @@ func NewClient(opts ...Option) (*Client, error) {
 	o.log.Debug("CRL cache duration: ", o.CRLCacheDuration)
 	o.log.Debug("CRL GOST url: ", o.CRLGOST)
 	o.log.Debug("CRL RSA url: ", o.CRLRSA)
-	o.log.Debug("CA GOST url: ", o.CACertGOST)
-	o.log.Debug("CA RSA url: ", o.CACertRSA)
-	o.log.Debug("NCA RSA url: ", o.NcaCertGOST)
-	o.log.Debug("NCA RSA url: ", o.NcaCertRSA)
+	o.log.Debug("Certs: ", o.Certs)
 
 	kc, err := NewKCClient()
 	if err != nil {
@@ -110,30 +107,23 @@ func NewClient(opts ...Option) (*Client, error) {
 	cli.kc.KCTSASetURL(cli.o.TSP)
 
 	if cli.o.Proxy != nil {
-		er := cli.kc.KCSetProxy(KCFlagProxyOn, cli.o.Proxy)
-		if er != nil {
-			cli.log.Error("setting proxy error: ", er)
+		if err := cli.kc.KCSetProxy(KCFlagProxyOn, cli.o.Proxy); err != nil {
+			cli.log.Error("setting proxy error: ", err)
+			return nil, err
 		}
 	}
 
 	if cli.o.LoadCACertsOnInit {
-		var er error
-
-		er = cli.LoadCertsRSA(context.Background())
-		if er != nil {
-			cli.log.Error("load CA certs RSA error: ", er)
-		}
-
-		er = cli.LoadCertsGOST(context.Background())
-		if er != nil {
-			cli.log.Error("load CA certs GOST error: ", er)
+		if err := cli.LoadCerts(ctx); err != nil {
+			cli.log.Error("load CA certs RSA error: ", err)
+			return nil, err
 		}
 	}
 
 	if cli.o.LoadCRLCacheOnInit {
-		er := cli.LoadCRLCache(context.Background())
-		if er != nil {
-			cli.log.Error("load CRL cache error: ", er)
+		if err := cli.LoadCRLCache(ctx); err != nil {
+			cli.log.Error("load CRL cache error: ", err)
+			return nil, err
 		}
 	}
 
