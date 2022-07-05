@@ -1,6 +1,8 @@
 package gokalkan
 
-import "strings"
+import (
+	"strings"
+)
 
 // GetCertInfo возвращает информацию о сертификате.
 func (cli *Client) GetCertInfo(certPEM string) (result *X509RawInfo, err error) {

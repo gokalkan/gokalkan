@@ -2,7 +2,6 @@ package gokalkan
 
 import (
 	"encoding/xml"
-	"fmt"
 	"strings"
 )
 
@@ -38,7 +37,7 @@ func WrapWithWSSESoapEnvelope(dataXML, id string) (result string) {
 		SOAP: xmlnsSOAP,
 		WSU:  xmlnsWSU,
 		Body: soapBody{
-			ID:      fmt.Sprintf("%s", id),
+			ID:      id,
 			Content: replaceKey,
 		},
 	}
