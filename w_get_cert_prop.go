@@ -14,14 +14,12 @@ func (cli *Client) GetCertKeyUsage(certPEM string) (result KeyUsage, err error) 
 	return result, nil
 }
 
-// GetCertKeyUsages возвращает свойства о сертификате
-func (cli *Client) GetCertKeyUsages(certPEM string) ([]string, error) {
-	res, err := cli.kc.KCX509CertificateGetInfo(certPEM, KCCertPropKeyUsage)
+// GetCertProp возвращает свойства о сертификате
+func (cli *Client) GetCertProp(certPEM string, prop KCCertProp) (string, error) {
+	res, err := cli.getCertProp(certPEM, prop)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-
-	ku := strings.Split(strings.TrimSpace(res), " ")
-
-	return ku, nil
+	res = strings.TrimSpace(res)
+	return res, nil
 }

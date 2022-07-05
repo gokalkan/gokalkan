@@ -15,7 +15,7 @@ type KC interface {
 	// KCGetCertificatesList Обеспечивает получение списка сертификатов в виде строки и их количество.
 	KCGetCertificatesList() (certs string, err error)
 	// KCGetCertFromCMS Обеспечивает получение сертификата из CMS.
-	KCGetCertFromCMS(cms string, flag KCFlag) (cert string, err error)
+	KCGetCertFromCMS(cms string, signId int, flag KCFlag) (cert string, err error)
 	// KCLoadKeyStore загружает ключи/сертификат из хранилища
 	KCLoadKeyStore(password, containerPath string, storeType KCStoreType, alias string) (err error)
 
@@ -31,6 +31,7 @@ type KC interface {
 	KCSignData(inSign, inData string, alias string, flag KCFlag) (string, error)
 	// KCVerifyData обеспечивает проверку подписи
 	KCVerifyData(inSign, inData string, alias string, flag KCFlag) (*VerifiedData, error)
+	KCHashData(algo KCHashAlgo, dataB64 string, flag KCFlag) (result string, err error)
 
 	KCGetLastError() KCErrorCode
 	KCGetLastErrorString() (KCErrorCode, string)
