@@ -74,5 +74,5 @@ var allProps = []KCCertProp{
 	KCCertPropPoliciesID,
 	KCCertPropOCSP,
 	KCCertPropGetCRL,
-	KCCertPropGetDeltaCRL,
+	// KCCertPropGetDeltaCRL,
 }

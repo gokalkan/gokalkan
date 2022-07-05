@@ -31,7 +31,7 @@ func TestGetCertFromStore(t *testing.T) {
 }
 
 func TestKCGetCertFromCMS(t *testing.T) {
-	gotCert, err := cli.GetCertFromCMSB64(testCMS)
+	gotCert, err := cli.GetCertFromCMSB64(testCMS, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
