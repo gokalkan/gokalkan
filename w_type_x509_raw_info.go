@@ -37,16 +37,16 @@ type X509RawSubject struct {
 	CountryName  string `json:"country_name"`
 	SOPN         string `json:"sopn"`
 	LocalityName string `json:"locality_name"`
+	OrgName      string `json:"org_name"`
+	OrgUnitName  string `json:"org_unit_name"`
 	CommonName   string `json:"common_name"`
+	DN           string `json:"dn"`
 	GivenName    string `json:"given_name"`
 	Surname      string `json:"surname"`
 	SerialNumber string `json:"serial_number"`
 	Email        string `json:"email"`
-	OrgName      string `json:"org_name"`
-	OrgUnitName  string `json:"org_unit_name"`
 	Bc           string `json:"bc"`
 	Dc           string `json:"dc"`
-	DN           string `json:"dn"`
 }
 
 func (c *X509RawInfo) GetX509() (result X509, err error) {

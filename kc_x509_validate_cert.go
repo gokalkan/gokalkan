@@ -2,15 +2,24 @@ package gokalkan
 
 // #cgo LDFLAGS: -ldl
 // #include <dlfcn.h>
+// #include <strings.h>
 // #include "KalkanCrypt.h"
 //
 // int x509ValidateCertificate(char *inCert, int inCertLength, int validType, char *validPath, long long checkTime, char *outInfo, int *outInfoLength) {
-//     return kc_funcs->X509ValidateCertificate(inCert, inCertLength, validType, validPath, checkTime, outInfo, outInfoLength);
+//     bzero(outInfo, *outInfoLength);
+//     int rc = kc_funcs->X509ValidateCertificate(inCert, inCertLength, validType, validPath, checkTime, outInfo, outInfoLength);
+//     for(size_t i = 0; i < *outInfoLength-1; i++)
+//         if(outInfo[i] == '\r' && outInfo[i+1] != '\n') outInfo[i] = '\n';
+//     return rc;
 // }
 import "C"
 import (
 	"fmt"
 	"unsafe"
+)
+
+const (
+	outInfoLength = 8192
 )
 
 // KCX509ValidateCertificate - осуществляет проверку сертификата: проверка срока действия,
@@ -45,18 +54,13 @@ func (cli *KCClient) KCX509ValidateCertificate(inCert string, validateType KCVal
 	defer cli.mu.Unlock()
 
 	CInCert := C.CString(inCert)
-
 	defer C.free(unsafe.Pointer(CInCert))
 
 	CValidPath := C.CString(validatePath)
-
 	defer C.free(unsafe.Pointer(CValidPath))
 
-	outDataLength := 32768
-
-	data := C.malloc(C.ulong(C.sizeof_char * outDataLength))
-
-	defer C.free(data)
+	var kcOutInfo [outInfoLength]byte
+	kcOutInfoLen := outInfoLength
 
 	rc := int(C.x509ValidateCertificate(
 		CInCert,
@@ -64,9 +68,9 @@ func (cli *KCClient) KCX509ValidateCertificate(inCert string, validateType KCVal
 		C.int(int(validateType)),
 		CValidPath,
 		0,
-		(*C.char)(data),
-		(*C.int)(unsafe.Pointer(&outDataLength)),
+		(*C.char)(unsafe.Pointer(&kcOutInfo)),
+		(*C.int)(unsafe.Pointer(&kcOutInfoLen)),
 	))
 
-	return C.GoString((*C.char)(data)), cli.wrapError(rc)
+	return string(byteSlice(kcOutInfo[:])), cli.wrapError(rc)
 }
