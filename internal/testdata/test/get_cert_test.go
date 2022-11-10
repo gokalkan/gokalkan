@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestKCX509ExportCertificateFromStore(t *testing.T) {
+func TestX509ExportCertificateFromStore(t *testing.T) {
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			gotCrt, err := cli.KCX509ExportCertificateFromStore(key.Alias)
+			gotCrt, err := cli.X509ExportCertificateFromStore(key.Alias)
 			if err != nil {
 				tt.Fatal(err)
 			}

@@ -41,9 +41,7 @@ COPY ${CA_DIRECTORY}/*.pem /etc/ssl/certs/
 # RUN update-ca-certificates
 
 # install kalkan libs
-COPY ./internal/lib/libkalkancryptwr-64.so* /usr/lib/
-COPY ./internal/lib/kalkancrypt /opt/kalkancrypt/
-ENV LD_LIBRARY_PATH=/opt/kalkancrypt:/opt/kalkancrypt/lib/engines:$LD_LIBRARY_PATH
+COPY ./sdk/libkalkancryptwr-64.so /usr/lib/
 
 # build app
 COPY . .

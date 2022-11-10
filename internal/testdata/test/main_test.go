@@ -5,15 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gokalkan/gokalkan"
-
-	"github.com/gokalkan/gokalkan/internal/testdata"
-	"github.com/gokalkan/gokalkan/internal/testdata/test/certs"
+	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
+	"github.com/doodocs/doodocs/pkg/gokalkan/internal/testdata"
+	"github.com/doodocs/doodocs/pkg/gokalkan/internal/testdata/test/certs"
 )
 
 //nolint:gochecknoglobals
 var (
-	cli *gokalkan.KCClient
+	cli *ckalkan.Client
 
 	keys = []testdata.Key{
 		certs.TestKeyGOST1,
@@ -23,20 +22,20 @@ var (
 func TestMain(m *testing.M) {
 	var err error
 
-	cli, err = gokalkan.NewKCClient()
+	cli, err = ckalkan.NewClient()
 	if err != nil {
 		fmt.Println("new kalkan client create error", err)
 		os.Exit(1)
 	}
 
-	err = cli.KCInit()
+	err = cli.Init()
 	if err != nil {
 		fmt.Println("new kalkan init error", err)
 		os.Exit(1)
 	}
 
 	for _, v := range keys {
-		err = cli.KCLoadKeyStore(v.Password, v.Path, gokalkan.KCStoreTypePKCS12, v.Alias)
+		err = cli.LoadKeyStore(v.Password, v.Path, ckalkan.StoreTypePKCS12, v.Alias)
 		if err != nil {
 			fmt.Println("load key store error:", err)
 			os.Exit(1)
@@ -45,7 +44,7 @@ func TestMain(m *testing.M) {
 
 	c := m.Run()
 
-	er := cli.KCClose()
+	er := cli.Close()
 	if er != nil {
 		fmt.Println("kalkan client close error", er)
 	}

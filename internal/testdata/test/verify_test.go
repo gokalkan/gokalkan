@@ -3,15 +3,15 @@ package test
 import (
 	"testing"
 
-	"github.com/gokalkan/gokalkan"
+	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
 )
 
-func TestKCX509ValidateCertificateNothing(t *testing.T) {
+func TestX509ValidateCertificateNothing(t *testing.T) {
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			_, err := cli.KCX509ValidateCertificate(key.Cert, gokalkan.KCValidateTypeNothing, "")
+			_, err := cli.X509ValidateCertificate(key.Cert, ckalkan.ValidateTypeNothing, "")
 			if err != nil {
 				tt.Fatal(err)
 			}
@@ -19,12 +19,12 @@ func TestKCX509ValidateCertificateNothing(t *testing.T) {
 	}
 }
 
-func TestKCX509ValidateCertificateOCSP(t *testing.T) {
+func TestX509ValidateCertificateOCSP(t *testing.T) {
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			_, err := cli.KCX509ValidateCertificate(key.Cert, gokalkan.KCValidateTypeOCSP, "http://test.pki.gov.kz/ocsp/")
+			_, err := cli.X509ValidateCertificate(key.Cert, ckalkan.ValidateTypeOCSP, "http://test.pki.gov.kz/ocsp/")
 			if err != nil {
 				tt.Fatal(err)
 			}

@@ -32,42 +32,18 @@ KalkanCrypt является основной библиотекой для ра
 
 #### 3. Скопировать .so файлы
 
-Файлы лежат в директории `SDK/C/Linux/C`. Команда для копирования:
+Файлы лежат в директории `SDK 2.0/C/Linux/C/libs/v2.0.4`. Команда для копирования:
 
 ```sh
-sudo cp -f libkalkancryptwr-64.so libkalkancryptwr-64.so.1.1.0 /usr/lib/
+sudo cp -f libkalkancryptwr-64.so.2.0.4 /usr/lib/libkalkancryptwr-64.so
 ```
-
-#### 4. Скопировать kalkancrypt
-
-Скопировать папку `SDK/C/Linux/libs_for_linux/kalkancrypt` в `/opt/`:
-
-```sh
-sudo cp -r kalkancrypt /opt/
-```
-
-#### 5. Настроить права доступа kalkancrypt
-
-```sh
-sudo chmod -R 555 /opt/kalkancrypt
-```
-
-#### 6. Установить переменную окружения
-
-При использовании `gokalkan` убедитесь, что экспортирована переменная окружения:
-
-```sh
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/kalkancrypt/:/opt/kalkancrypt/lib/engines
-```
-
-Эта переменная нужна для обращения к библиотеке KalkanCrypt.
 
 ## Установка
 
 Версия Go 1.17+
 
 ```sh
-go get github.com/gokalkan/gokalkan
+go get github.com/doodocs/doodocs/pkg/gokalkan
 ```
 
 ## Загрузка хранилища PKCS12
