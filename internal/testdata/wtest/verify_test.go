@@ -2,12 +2,10 @@ package wtest
 
 import (
 	"testing"
-
-	"github.com/gokalkan/gokalkan"
 )
 
 func TestVerifyCertNothing(t *testing.T) {
-	gotResult, err := cli.VerifyCert(key.Cert, gokalkan.KCValidateTypeNothing)
+	gotResult, err := cli.ValidateCert(key.Cert)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,16 +14,7 @@ func TestVerifyCertNothing(t *testing.T) {
 }
 
 func TestVerifyCertOCSP(t *testing.T) {
-	gotResult, err := cli.VerifyCert(key.Cert, gokalkan.KCValidateTypeOCSP)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Log(key.Alias, gotResult)
-}
-
-func TestVerifyCertCRL(t *testing.T) {
-	gotResult, err := cli.VerifyCert(key.Cert, gokalkan.KCValidateTypeCRL)
+	gotResult, err := cli.ValidateCertOCSP(key.Cert)
 	if err != nil {
 		t.Fatal(err)
 	}

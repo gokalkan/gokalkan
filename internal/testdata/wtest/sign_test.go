@@ -4,15 +4,15 @@ import (
 	"testing"
 )
 
-func TestSignCMSB64(t *testing.T) {
-	data := "dGVzdA=="
+func TestSign(t *testing.T) {
+	data := []byte("test")
 
-	gotSignedData, err := cli.SignCMSB64(data, false)
+	gotSignedData, err := cli.Sign(data, false, false)
 	if err != nil {
 		t.Fatalf("%s: %s", key.Alias, err)
 	}
 
-	_, err = cli.VerifyCMSB64(gotSignedData)
+	_, err = cli.Verify(gotSignedData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,29 +43,15 @@ func TestSignWSEE(t *testing.T) {
 	}
 }
 
-// func TestSignCMSB64WithTSP(t *testing.T) {
-// 	data := "dGVzdA=="
+func TestSignDetached(t *testing.T) {
+	data := []byte("test")
 
-// 	gotSignedData, err := cli.SignCMSB64(data, true)
-// 	if err != nil {
-// 		t.Fatalf("%s: %s", key.Alias, err)
-// 	}
-
-// 	_, err := cli.VerifyCMSB64(gotSignedData)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// }
-
-func TestSignDetachedCMSB64(t *testing.T) {
-	data := "dGVzdA=="
-
-	gotSignedData, err := cli.SignDetachedCMSB64(data, false)
+	gotSignedData, err := cli.Sign(data, true, false)
 	if err != nil {
 		t.Fatalf("%s: %s", key.Alias, err)
 	}
 
-	_, err = cli.VerifyDetachedCMSB64(gotSignedData, data)
+	_, err = cli.VerifyDetached(gotSignedData, data)
 	if err != nil {
 		t.Fatal(err)
 	}

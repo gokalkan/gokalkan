@@ -3,24 +3,27 @@ package test
 import (
 	"testing"
 
-	"github.com/gokalkan/gokalkan"
+	"github.com/doodocs/doodocs/pkg/gokalkan"
+	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
 )
 
-func TestKCSignData(t *testing.T) {
+func TestSignData(t *testing.T) {
 	data := "dGVzdA=="
 
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			gotSignedData, err := cli.KCSignData(data, key.Alias, gokalkan.SignBase64)
+			signBase64 := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
+
+			gotSignedData, err := cli.SignData("", data, key.Alias, signBase64)
 			if err != nil {
 				tt.Fatalf("%s: %s", key.Alias, err)
 			}
 
 			tt.Logf("\n%s: signed data: '%s'\n", key.Alias, gotSignedData)
 
-			gotVerifyResult, err := cli.KCVerifyData(gotSignedData, key.Alias, gokalkan.SignBase64)
+			gotVerifyResult, err := cli.VerifyData(gotSignedData, data, key.Alias, signBase64)
 			if err != nil {
 				tt.Fatal(err)
 			}
@@ -30,21 +33,21 @@ func TestKCSignData(t *testing.T) {
 	}
 }
 
-func TestKCSignXML(t *testing.T) {
+func TestSignXML(t *testing.T) {
 	data := "<test>data</test>"
 
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			gotSignedData, err := cli.KCSignXML(data, key.Alias, 0, "", "", "")
+			gotSignedData, err := cli.SignXML(data, key.Alias, 0, "", "", "")
 			if err != nil {
 				tt.Fatalf("%s: %s", key.Alias, err)
 			}
 
 			tt.Logf("\n%s: signed data: '%s'\n", key.Alias, gotSignedData)
 
-			gotVerifyResult, err := cli.KCVerifyXML(gotSignedData, key.Alias, 0)
+			gotVerifyResult, err := cli.VerifyXML(gotSignedData, key.Alias, 0)
 			if err != nil {
 				tt.Fatal(err)
 			}
@@ -54,26 +57,26 @@ func TestKCSignXML(t *testing.T) {
 	}
 }
 
-func TestKCSignWSEE(t *testing.T) {
-	data := gokalkan.WrapWithWSSESoapEnvelope("<test>data</test>", "12345")
+func TestSignWSEE(t *testing.T) {
+	data := gokalkan.WrapWithWSSESoapEnvelope("<test>data</test>", "id-BEFF7CB55C69AB1BB514762482966309")
 
 	for _, key := range keys {
 		key := key
 
 		t.Run(key.Alias, func(tt *testing.T) {
-			gotSignedData, err := cli.KCSignWSSE(data, key.Alias, 0, "")
+			gotSignedData, err := cli.SignWSSE(data, key.Alias, 0, "")
 			if err != nil {
 				tt.Fatalf("%s: %s", key.Alias, err)
 			}
 
 			tt.Logf("\n%s: signed data: '%s'\n", key.Alias, gotSignedData)
 
-			//verifyResult, err := cli.KCVerifyXML(gotSignedData, key.Alias, 0)
-			//if err != nil {
-			//	tt.Fatal(err)
-			//}
-			//
-			//tt.Log(verifyResult)
+			// verifyResult, err := cli.VerifyXML(gotSignedData, key.Alias, 0)
+			// if err != nil {
+			// 	tt.Fatal(err)
+			// }
+
+			// tt.Log(verifyResult)
 		})
 	}
 }
