@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	"github.com/doodocs/doodocs/pkg/gokalkan"
-	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan"
+	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
 func TestSignData(t *testing.T) {

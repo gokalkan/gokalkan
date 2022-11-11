@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
 func WithCert(cert *x509.Certificate, typ ckalkan.CertType) Option {
