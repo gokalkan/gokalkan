@@ -1,3 +1,3 @@
-module github.com/doodocs/doodocs/pkg/gokalkan
+module github.com/gokalkan/gokalkan
 
 go 1.18

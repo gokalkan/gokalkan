@@ -1,7 +1,7 @@
 package gokalkan
 
 import (
-	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
 func (cli *Client) ValidateCert(cert string) (string, error) {

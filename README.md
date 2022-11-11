@@ -43,7 +43,7 @@ sudo cp -f libkalkancryptwr-64.so.2.0.4 /usr/lib/libkalkancryptwr-64.so
 Версия Go 1.17+
 
 ```sh
-go get github.com/doodocs/doodocs/pkg/gokalkan
+go get github.com/gokalkan/gokalkan
 ```
 
 ## Загрузка хранилища PKCS12

@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/doodocs/doodocs/pkg/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
 func TestX509ValidateCertificateNothing(t *testing.T) {
