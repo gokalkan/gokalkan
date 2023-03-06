@@ -295,6 +295,7 @@ typedef struct stKCFunctions {
 //int KC_DECL dllmain(void);
 int KC_DECL KC_GetFunctionList(stKCFunctionsType **KCfunc);
 
+__attribute__((weak))
 stKCFunctionsType *kc_funcs;
 
 //---------------------------------------------------------------------------------------
