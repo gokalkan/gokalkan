@@ -21,6 +21,8 @@ type Kalkan interface {
 	VerifyXML(signedXML string) (string, error)
 	VerifyDetached(signature, data []byte) (string, error)
 
+	GetCertFromCMS(cms []byte, signID int) (string, error)
+
 	ValidateCert(cert string) (string, error)
 	ValidateCertOCSP(cert string, url ...string) (string, error)
 
