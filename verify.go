@@ -7,15 +7,15 @@ import (
 )
 
 // Verify обеспечивает проверку подписи CMS в base64.
-func (cli *Client) Verify(signature []byte) (string, error) {
+func (cli *Client) Verify(signature []byte) (string, []byte, error) {
 	signatureB64 := base64.StdEncoding.EncodeToString(signature)
 	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
 
 	resp, err := cli.kc.VerifyData(signatureB64, "", "", flags)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return string(resp.Info), err
+	return string(resp.Info), resp.Data, err
 }
 
 // VerifyXML обеспечивает проверку подписи данных в формате XML.
