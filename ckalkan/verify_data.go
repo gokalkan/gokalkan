@@ -10,6 +10,7 @@ package ckalkan
 import "C"
 import (
 	"fmt"
+	"reflect"
 	"unsafe"
 )
 
@@ -58,7 +59,10 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 	defer C.free(kcInSign)
 	inputSignLength := len(inSign)
 
-	kcOutData := make([]byte, 0, len(inSign))
+	kcOutData := make([]byte, len(inSign), len(inSign))
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&kcOutData))
+
+	//kcOutData
 	kcOutDataLen := len(inSign)
 
 	var kcOutVerifyInfo [outVerifyInfoLength]byte
@@ -76,7 +80,7 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 		C.int(inDataLength),
 		(*C.uchar)(kcInSign),
 		C.int(inputSignLength),
-		(*C.char)(unsafe.Pointer(&kcOutData)),
+		(*C.char)(unsafe.Pointer(hdr.Data)),
 		(*C.int)(unsafe.Pointer(&kcOutDataLen)),
 		(*C.char)(unsafe.Pointer(&kcOutVerifyInfo)),
 		(*C.int)(unsafe.Pointer(&kcOutVerifyInfoLen)),
