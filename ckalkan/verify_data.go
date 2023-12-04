@@ -61,7 +61,8 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 	var kcOutData [outDataLength]byte
 	kcOutDataLen := outDataLength
 
-	var kcOutVerifyInfo [outVerifyInfoLength]byte
+	kcOutVerifyInfo := make([]byte, len(inSign), len(inSign))
+	//var kcOutVerifyInfo [outVerifyInfoLength]byte
 	kcOutVerifyInfoLen := outVerifyInfoLength
 
 	kcInCertID := 0
