@@ -18,7 +18,7 @@ const (
 	outCertLength = 64768
 
 	// длина информации сертификата возвращаемая от проверки
-	outVerifyInfoLength = 64768
+	//outVerifyInfoLength = 64768
 
 	// длина данных возвращаемая от проверки
 	outDataLength = 28000
@@ -62,8 +62,7 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 	kcOutDataLen := outDataLength
 
 	kcOutVerifyInfo := make([]byte, len(inSign), len(inSign))
-	//var kcOutVerifyInfo [outVerifyInfoLength]byte
-	kcOutVerifyInfoLen := outVerifyInfoLength
+	kcOutVerifyInfoLen := len(inSign)
 
 	kcInCertID := 0
 

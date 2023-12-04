@@ -17,7 +17,7 @@ type Kalkan interface {
 	SignXML(xml string) (signedXML string, err error)
 	SignWSSE(xml, id string) (signedXML string, err error)
 
-	Verify(signature []byte) (string, error)
+	Verify(signature []byte) (string, []byte, error)
 	VerifyXML(signedXML string) (string, error)
 	VerifyDetached(signature, data []byte) (string, error)
 
