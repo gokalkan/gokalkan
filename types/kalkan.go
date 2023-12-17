@@ -16,11 +16,12 @@ type Kalkan interface {
 
 	Sign(data []byte, isDetached, withTSP bool) (signature []byte, err error)
 	SignXML(xml string, withTSP bool) (signedXML string, err error)
-	SignWSSE(xml, id string) (signedXML string, err error)
+	SignWSSE(xmlData, id string) (string, error)
 	SignHash(algo ckalkan.HashAlgo, inHash []byte, isDetached, withTSP bool) (signedHash []byte, err error)
 
 	Verify(input *VerifyInput) (string, error)
 	VerifyXML(input *VerifyInput) (result string, err error)
+	VerifyDetached(signature, data []byte) (string, error)
 
 	ValidateCert(cert string) (string, error)
 	ValidateCertOCSP(cert string, url ...string) (string, error)
