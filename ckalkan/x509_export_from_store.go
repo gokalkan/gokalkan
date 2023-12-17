@@ -14,7 +14,7 @@ import (
 )
 
 // X509ExportCertificateFromStore экспортирует сертификата из хранилища.
-func (cli *Client) X509ExportCertificateFromStore(alias string) (result string, err error) {
+func (cli *Client) X509ExportCertificateFromStore(alias string, flag Flag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -29,7 +29,6 @@ func (cli *Client) X509ExportCertificateFromStore(alias string) (result string, 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 
-	flag := 0
 	outCertLen := 32768
 
 	cert := C.malloc(C.ulong(C.sizeof_char * outCertLen))
