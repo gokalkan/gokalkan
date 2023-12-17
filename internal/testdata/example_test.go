@@ -14,6 +14,9 @@ func ExampleClient_Sign() {
 
 	cli, _ := gokalkan.NewClient(opts...)
 
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
 	keyPassword := "Qwerty12"
@@ -34,6 +37,9 @@ func ExampleClient_Verify() {
 	opts := gokalkan.OptsTest
 
 	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
 
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
@@ -63,6 +69,9 @@ func ExampleClient_GetTimeFromSig() {
 	opts := gokalkan.OptsTest
 
 	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
 
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
@@ -187,6 +196,9 @@ func ExampleClient_SignXML() {
 
 	cli, _ := gokalkan.NewClient(opts...)
 
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
 	keyPassword := "Qwerty12"
@@ -207,6 +219,9 @@ func ExampleClient_VerifyXML() {
 	opts := gokalkan.OptsTest
 
 	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
 
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
@@ -238,6 +253,9 @@ func ExampleClient_SignHash() {
 	opts := gokalkan.OptsTest
 
 	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
 
 	//Тестовый RSA ключ от НУЦ РК
 	keyPath := "./test/certs/gost1.p12"
