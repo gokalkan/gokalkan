@@ -45,7 +45,7 @@ func (cli *Client) LoadCertFromBytes(cert []byte, certType ckalkan.CertType) (er
 }
 
 // X509ExportCertificateFromStore экспортирует сертификат из хранилища в формате PEM или в кодировке BASE64
-func (cli *Client) X509ExportCertificateFromStore(outputPEM bool) (tokens string, err error) {
+func (cli *Client) X509ExportCertificateFromStore(outputPEM bool) (result string, err error) {
 	var alias string
 	var flags ckalkan.Flag
 	if outputPEM {
