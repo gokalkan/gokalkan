@@ -44,7 +44,7 @@ const (
 // - ValidateTypeNothing - не производятся проверки по CRL или OCSP.
 // Параметр path игнорируется.
 // Например: X509ValidateCertificate(gostCert, ValidateTypeNothing, "")
-func (cli *Client) X509ValidateCertificate(inCert string, validateType ValidateType, validatePath string) (result string, err error) {
+func (cli *Client) X509ValidateCertificate(inCert string, validateType ValidateType, validatePath string, flags Flag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -79,7 +79,7 @@ func (cli *Client) X509ValidateCertificate(inCert string, validateType ValidateT
 		0,
 		(*C.char)(unsafe.Pointer(&kcOutInfo)),
 		(*C.int)(unsafe.Pointer(&kcOutInfoLen)),
-		0,
+		C.int(flags),
 		(*C.char)(unsafe.Pointer(&kcGetResp)),
 		(*C.int)(unsafe.Pointer(&kcGetRespLen)),
 	))
