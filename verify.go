@@ -2,6 +2,7 @@ package gokalkan
 
 import (
 	"encoding/base64"
+	"github.com/gokalkan/gokalkan/types"
 
 	"github.com/gokalkan/gokalkan/ckalkan"
 )
@@ -19,8 +20,27 @@ func (cli *Client) Verify(signature []byte) (string, error) {
 }
 
 // VerifyXML обеспечивает проверку подписи данных в формате XML.
-func (cli *Client) VerifyXML(signedXML string) (result string, err error) {
-	return cli.kc.VerifyXML(signedXML, "", 0)
+func (cli *Client) VerifyXML(input *types.VerifyInput) (result string, err error) {
+	var (
+		flags     ckalkan.Flag
+		signedXML string
+	)
+
+	signedXML = string(input.SignatureBytes)
+
+	if input.IsDetached {
+		flags |= ckalkan.FlagIn2Base64
+		flags |= ckalkan.FlagDetachedData
+
+	} else {
+		flags |= ckalkan.FlagOutBase64
+	}
+
+	if !input.MustCheckCertTime {
+		flags |= ckalkan.FlagNoCheckCertTime
+	}
+
+	return cli.kc.VerifyXML(signedXML, "", flags)
 }
 
 // VerifyDetached обеспечивает проверку отделенной подписи
