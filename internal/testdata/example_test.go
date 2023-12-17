@@ -79,3 +79,104 @@ func ExampleClient_GetTimeFromSig() {
 	// Output:
 	// Время подписания: time....
 }
+
+func ExampleClient_SignWSSE() {
+	opts := gokalkan.OptsTest
+
+	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
+	//Тестовый RSA ключ от НУЦ РК
+	keyPath := "./test/certs/gost1.p12"
+	keyPassword := "Qwerty12"
+
+	// Подгружаем хранилище с паролем
+	cli.LoadKeyStore(keyPath, keyPassword)
+
+	signedWSSE, _ := cli.SignWSSE("<root>this is sample</root>", "1")
+
+	fmt.Printf("Подписанный документ WSSE: %s\n", signedWSSE)
+	// Output:
+	// Подписанный документ WSSE:
+}
+
+func ExampleClient_X509ExportCertificateFromStore() {
+	opts := gokalkan.OptsTest
+
+	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
+	//Тестовый RSA ключ от НУЦ РК
+	keyPath := "./test/certs/gost1.p12"
+	keyPassword := "Qwerty12"
+
+	// Подгружаем хранилище с паролем
+	cli.LoadKeyStore(keyPath, keyPassword)
+
+	cert, _ := cli.X509ExportCertificateFromStore(true)
+
+	fmt.Printf("Сертификат: %s\n", cert)
+	// Output:
+	// Сертификат:
+}
+
+func ExampleClient_X509CertificateGetInfo() {
+	opts := gokalkan.OptsTest
+
+	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
+	//Тестовый RSA ключ от НУЦ РК
+	keyPath := "./test/certs/gost1.p12"
+	keyPassword := "Qwerty12"
+
+	// Подгружаем хранилище с паролем
+	cli.LoadKeyStore(keyPath, keyPassword)
+
+	// Заполняем необходимые поля
+	fields := []string{
+		"CertPropIssuerCountryName",
+		"CertPropNotAfter",
+		"CertPropOCSP",
+		"CertPropSubjectSurname",
+	}
+
+	// Экспортируем сертификат из хранилища
+	cert, _ := cli.X509ExportCertificateFromStore(true)
+
+	info, _ := cli.X509CertificateGetInfo(cert, fields)
+
+	fmt.Printf("Информация по сертификату: %s\n", info)
+	// Output:
+	// Информация по сертификату:
+}
+
+func ExampleClient_GetCertFromXML() {
+	opts := gokalkan.OptsTest
+
+	cli, _ := gokalkan.NewClient(opts...)
+
+	// Обязательно закрывайте клиент, иначе приведет к утечкам ресурсов
+	defer cli.Close()
+
+	//Тестовый RSA ключ от НУЦ РК
+	keyPath := "./test/certs/gost1.p12"
+	keyPassword := "Qwerty12"
+
+	// Подгружаем хранилище с паролем
+	cli.LoadKeyStore(keyPath, keyPassword)
+
+	signedXML, _ := cli.SignXML("<root>this is a sample</root>", true)
+
+	cert, _ := cli.GetCertFromXML(signedXML, 0)
+
+	fmt.Printf("Сертификат: %s\n", cert)
+	// Output:
+	// Информация по сертификату:
+}
