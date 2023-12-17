@@ -30,13 +30,40 @@ func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte
 }
 
 // SignXML подписывает данные в формате XML.
-func (cli *Client) SignXML(xmlData string) (string, error) {
-	return cli.kc.SignXML(xmlData, "", 0, "", "", "")
+func (cli *Client) SignXML(xmlData string, withTSP bool) (string, error) {
+	var flags ckalkan.Flag
+
+	if withTSP {
+		flags = ckalkan.FlagWithTimestamp
+	}
+
+	return cli.kc.SignXML(xmlData, "", flags, "", "", "")
 }
 
 func (cli *Client) SignWSSE(xmlData, id string) (string, error) {
 	soapEnvelope := WrapWithWSSESoapEnvelope(xmlData, id)
 	return cli.kc.SignWSSE(soapEnvelope, "", 0, id)
+}
+
+// SignHash подписывает hash и возвращает CMS с подписью.
+func (cli *Client) SignHash(algo ckalkan.HashAlgo, inHash []byte, isDetached, withTSP bool) (signedHash []byte, err error) {
+	dataB64 := base64.StdEncoding.EncodeToString(inHash)
+	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
+
+	if withTSP {
+		flags |= ckalkan.FlagWithTimestamp
+	}
+
+	if isDetached {
+		flags |= ckalkan.FlagDetachedData
+	}
+
+	signatureB64, err := cli.kc.SignHash(algo, dataB64, flags)
+	if err != nil {
+		return nil, err
+	}
+
+	return base64.StdEncoding.DecodeString(signatureB64)
 }
 
 const (
