@@ -6,6 +6,7 @@ import (
 	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
+// Включает использование прокси сервера.
 func (cli *Client) SetProxyOn(proxyURL string) error {
 	url, err := url.Parse(proxyURL)
 	if err != nil {
@@ -15,6 +16,7 @@ func (cli *Client) SetProxyOn(proxyURL string) error {
 	return cli.kc.SetProxy(flag, url)
 }
 
+// Отключает использование прокси сервера.
 func (cli *Client) SetProxyOff(proxyURL string) error {
 	url, err := url.Parse(proxyURL)
 	if err != nil {

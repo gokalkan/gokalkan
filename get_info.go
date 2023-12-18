@@ -21,7 +21,7 @@ func (cli *Client) GetTimeFromSig(data string, base64 bool) (time.Time, error) {
 }
 
 // X509CertificateGetInfo Обеспечивает получение значений полей/расширений из сертификата
-// Сертификат должен быть предварительно загружен с помощью одной из функций: LoadKeyStore(), X509LoadCertificateFromFile(),X509LoadCertificateFromBuffer().
+// Сертификат должен быть предварительно загружен с помощью одной из функций: LoadKeyStore(), X509LoadCertificateFromFile().
 // Укажите необходимые строки полей в срезе fields из мапы ckalkan.CertPropMap
 func (cli *Client) X509CertificateGetInfo(inCert string, fields []string) (string, error) {
 	var res string
