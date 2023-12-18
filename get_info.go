@@ -35,3 +35,8 @@ func (cli *Client) X509CertificateGetInfo(inCert string, fields []string) (strin
 	}
 	return res[:len(res)-1], nil
 }
+
+// GetSigAlgFromXML обеспечивает получение алгоритма подписи из XML.
+func (cli *Client) GetSigAlgFromXML(xml string) (string, error) {
+	return cli.kc.GetSigAlgFromXML(xml)
+}
