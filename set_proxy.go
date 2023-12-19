@@ -12,8 +12,8 @@ func (cli *Client) SetProxyOn(proxyURL string) error {
 	if err != nil {
 		return err
 	}
-	flag := ckalkan.FlagProxyOn
-	return cli.kc.SetProxy(flag, url)
+	flags := ckalkan.FlagProxyOn
+	return cli.kc.SetProxy(flags, url)
 }
 
 // Отключает использование прокси сервера.
@@ -22,6 +22,6 @@ func (cli *Client) SetProxyOff(proxyURL string) error {
 	if err != nil {
 		return err
 	}
-	flag := ckalkan.FlagProxyOff
-	return cli.kc.SetProxy(flag, url)
+	flags := ckalkan.FlagProxyOff
+	return cli.kc.SetProxy(flags, url)
 }

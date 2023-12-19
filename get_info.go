@@ -6,18 +6,18 @@ import (
 	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
-// GetTimeFromSig получает время подписания из CMS
+// GetTimeFromSig получает время подписания из CMS в кодировке DER.
 // Если вы хотите пeредать данные подписи в base64 формате, то установите флаг base64 = true
 func (cli *Client) GetTimeFromSig(data string, base64 bool) (time.Time, error) {
-	var flag ckalkan.Flag
+	var flags ckalkan.Flag
 
-	flag = ckalkan.FlagInDER
+	flags = ckalkan.FlagInDER
 
 	if base64 {
-		flag = ckalkan.FlagInBase64
+		flags = ckalkan.FlagInBase64
 	}
 
-	return cli.kc.GetTimeFromSig(data, flag, 0)
+	return cli.kc.GetTimeFromSig(data, flags, 0)
 }
 
 // X509CertificateGetInfo Обеспечивает получение значений полей/расширений из сертификата

@@ -14,7 +14,7 @@ import (
 )
 
 // GetCertFromCMS обеспечивает получение сертификата из CMS.
-func (cli *Client) GetCertFromCMS(cms string, signID int, flag Flag) (cert string, err error) {
+func (cli *Client) GetCertFromCMS(cms string, signID int, flags Flag) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -40,7 +40,7 @@ func (cli *Client) GetCertFromCMS(cms string, signID int, flag Flag) (cert strin
 		cCMS,
 		C.int(len(cms)),
 		C.int(signID),
-		C.int(int(flag)),
+		C.int(int(flags)),
 		(*C.char)(outCert),
 		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))
