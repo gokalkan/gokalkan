@@ -60,7 +60,7 @@ func ExampleClient_Verify() {
 	// Signature N 1
 	// - CAdES-BES: verify signer certificate hash - OK.
 	// Verify - OK
-	// CMS Verify - OK	
+	// CMS Verify - OK
 }
 
 func ExampleClient_GetTimeFromSig() {
@@ -230,12 +230,7 @@ func ExampleClient_VerifyXML() {
 
 	signData, _ := cli.SignXML(data, false)
 
-	ver, _ := cli.VerifyXML(&types.VerifyInput{
-		SignatureBytes:    []byte(signData),
-		DataBytes:         []byte(data),
-		IsDetached:        false,
-		MustCheckCertTime: false,
-	})
+	ver, _ := cli.VerifyXML(signData, true)
 
 	fmt.Println(ver)
 	// Output:
