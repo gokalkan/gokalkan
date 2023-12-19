@@ -25,7 +25,7 @@ type Kalkan interface {
 	SignHash(algo ckalkan.HashAlgo, inHash []byte, isDetached, withTSP bool) (signedHash []byte, err error)
 
 	Verify(input *VerifyInput) (string, error)
-	VerifyXML(input *VerifyInput) (result string, err error)
+	VerifyXML(signedXML string, mustCheckCertTime bool) (result string, err error)
 	VerifyDetached(signature, data []byte) (string, error)
 
 	ValidateCert(cert string) (string, error)
