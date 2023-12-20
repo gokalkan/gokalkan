@@ -13,7 +13,6 @@ func (cli *Client) GetCertFromCMS(cms []byte, signID int) (string, error) {
 }
 
 // GetCertFromXML обеспечивает получение сертификата из XML.
-func (cli *Client) GetCertFromXML(xml string, signID int) (string, error) {
-	cert, err := cli.kc.GetCertFromXML(xml, signID)
-	return string(cert), err
+func (cli *Client) GetCertFromXML(xml string, signID int) ([]byte, error) {
+	return cli.kc.GetCertFromXML(xml, signID)
 }
