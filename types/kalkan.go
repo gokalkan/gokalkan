@@ -38,7 +38,7 @@ type Kalkan interface {
 	SetProxyOff(proxyURL string) error
 
 	GetCertFromCMS(cms []byte, signID int) (string, error)
-	GetCertFromXML(xml string, signID int) (string, error)
+	GetCertFromXML(xml string, signID int) ([]byte, error)
 
 	X509CertificateGetInfo(inCert string, fields []string) (string, error)
 	GetTimeFromSig(data string, base64 bool) (time.Time, error)
