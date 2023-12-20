@@ -41,7 +41,7 @@ type Kalkan interface {
 	GetCertFromXML(xml string, signID int) ([]byte, error)
 
 	X509CertificateGetInfo(inCert string, fields []string) (string, error)
-	GetTimeFromSig(data string, base64 bool) (time.Time, error)
+	GetTimeFromSig(cmsDer []byte) (time.Time, error)
 	GetSigAlgFromXML(xml string) (string, error)
 
 	Close() error
