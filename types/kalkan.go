@@ -1,6 +1,7 @@
 package types
 
 import (
+	"crypto/x509"
 	"time"
 
 	"github.com/gokalkan/gokalkan/ckalkan"
@@ -37,8 +38,8 @@ type Kalkan interface {
 	SetProxyOn(proxyURL string) error
 	SetProxyOff(proxyURL string) error
 
-	GetCertFromCMS(cms []byte, signID int) (string, error)
-	GetCertFromXML(xml string, signID int) ([]byte, error)
+	GetCertFromCMS(cms []byte) ([]*x509.Certificate, error)
+	GetCertFromXML(xml string) ([]*x509.Certificate, error)
 
 	X509CertificateGetInfo(inCert string, fields []string) (string, error)
 	GetTimeFromSig(cmsDer []byte) (time.Time, error)
