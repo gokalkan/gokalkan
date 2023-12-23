@@ -14,6 +14,22 @@ type VerifyInput struct {
 	MustCheckCertTime bool
 }
 
+type ValidateType string
+
+const (
+	ValidateOCSP    ValidateType = "OCSP"
+	ValidateCRL     ValidateType = "CRL"
+	ValidateNothing ValidateType = "Nothing"
+)
+
+type ValidateCertInput struct {
+	Certificate   *x509.Certificate
+	CheckCertTime bool
+	ValidateType  ValidateType
+	OCSPUrl       string
+	CRLPath       string
+}
+
 // Kalkan - это обертка над методами KalkanCrypt.
 type Kalkan interface {
 	LoadKeyStore(path, password string) (err error)
@@ -29,8 +45,7 @@ type Kalkan interface {
 	VerifyXML(signedXML string, mustCheckCertTime bool) (result string, err error)
 	VerifyDetached(signature, data []byte) (string, error)
 
-	ValidateCert(cert string) (string, error)
-	ValidateCertOCSP(cert string, url ...string) (string, error)
+	ValidateCert(input *ValidateCertInput) (string, error)
 
 	HashSHA256(data []byte) ([]byte, error)
 	HashGOST95(data []byte) ([]byte, error)
