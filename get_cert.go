@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var errUserCertNotFound = ("ERROR 0x8f0001b:")
+var errUserCertNotFound = ("ERROR 0x8f0001b")
 
 // GetCertFromCMS обеспечивает получение сертификата из CMS.
 func (cli *Client) GetCertFromCMS(cms []byte) ([]*x509.Certificate, error) {
