@@ -2,6 +2,8 @@ package gokalkan
 
 import (
 	"bytes"
+	"crypto/x509"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -45,14 +47,25 @@ func (cli *Client) LoadCertFromBytes(cert []byte, certType ckalkan.CertType) (er
 }
 
 // X509ExportCertificateFromStore экспортирует сертификат из хранилища в формате PEM или в кодировке BASE64
-func (cli *Client) X509ExportCertificateFromStore(outputPEM bool) (result string, err error) {
-	var alias string
-	var flags ckalkan.Flag
-	if outputPEM {
-		flags = ckalkan.FlagOutPEM
-	} else {
-		flags = ckalkan.FlagOutBase64
+func (cli *Client) X509ExportCertificateFromStore() (cert *x509.Certificate, err error) {
+	var (
+		alias string
+	)
+
+	certBase64, err := cli.kc.X509ExportCertificateFromStore(alias, ckalkan.FlagOutBase64)
+	if err != nil {
+		return nil, err
 	}
 
-	return cli.kc.X509ExportCertificateFromStore(alias, flags)
+	certBytes, err := base64.StdEncoding.DecodeString(certBase64)
+	if err != nil {
+		return nil, err
+	}
+
+	cert, err = x509.ParseCertificate(certBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return cert, nil
 }

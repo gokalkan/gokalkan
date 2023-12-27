@@ -127,11 +127,11 @@ func ExampleClient_X509ExportCertificateFromStore() {
 	// Подгружаем хранилище с паролем
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	cert, _ := cli.X509ExportCertificateFromStore(true)
+	cert, _ := cli.X509ExportCertificateFromStore()
 
-	fmt.Printf("Сертификат: %s\n", cert)
+	fmt.Printf("Сертификат: %s\n", cert.Issuer)
 	// Output:
-	// Сертификат:
+	// Сертификат: CN=ҰКО 3.0 (GOST TEST),C=KZ 
 }
 
 func ExampleClient_X509CertificateGetInfo() {
