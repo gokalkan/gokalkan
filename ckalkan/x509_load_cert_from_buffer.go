@@ -13,7 +13,7 @@ import (
 	"unsafe"
 )
 
-func (cli *Client) X509LoadCertificateFromBuffer(inCert []byte, flag CertCodeType) (err error) {
+func (cli *Client) X509LoadCertificateFromBuffer(inCert []byte, certCodetype CertCodeType) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -31,7 +31,7 @@ func (cli *Client) X509LoadCertificateFromBuffer(inCert []byte, flag CertCodeTyp
 	rc := int(C.x509LoadCertificateFromBuffer(
 		(*C.char)(unsafe.Pointer(&inCert)),
 		C.int(len(inCert)),
-		C.int(int(flag)),
+		C.int(int(certCodetype)),
 	))
 
 	return cli.wrapError(rc)

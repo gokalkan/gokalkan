@@ -14,7 +14,7 @@ import (
 )
 
 // GetCertFromZipFile обеспечивает получение сертификата из .zip архива.
-func (cli *Client) GetCertFromZipFile(zipFile string, flags Flag, signId int) (cert string, err error) {
+func (cli *Client) GetCertFromZipFile(zipFile string, flags Flag, signID int) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -39,7 +39,7 @@ func (cli *Client) GetCertFromZipFile(zipFile string, flags Flag, signId int) (c
 	rc := int(C.getCertFromZipFile(
 		cZipFile,
 		C.int(int(flags)),
-		C.int(signId),
+		C.int(signID),
 		(*C.char)(outCert),
 		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))

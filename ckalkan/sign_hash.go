@@ -19,7 +19,7 @@ import (
 //   - algo - алгоритм подписывания ("sha256", "Gost34311_95", "GostR3411_2015_512")
 //   - inHash - хэшированные данные
 //   - flag - флаги
-func (cli *Client) SignHash(algo HashAlgo, inHash string, flag Flag) (signedHash string, err error) {
+func (cli *Client) SignHash(algo HashAlgo, inHash string, flags Flag) (signedHash string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -47,7 +47,7 @@ func (cli *Client) SignHash(algo HashAlgo, inHash string, flag Flag) (signedHash
 
 	rc := int(C.signHash(
 		cAlias,
-		C.int(int(flag)),
+		C.int(int(flags)),
 		cInHash,
 		C.int(inHashLength),
 		(*C.uchar)(outSign),

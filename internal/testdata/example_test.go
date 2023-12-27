@@ -57,12 +57,10 @@ func ExampleClient_Verify() {
 	})
 	fmt.Println(ver)
 	// Output:
-	//Signature N 1
-	//Id = 1
-	//certificateSerialNumber=.....................................
-	//signatureAlgorithm=sha256WithRSAEncryption(1.2.840.113549.1.1.11)
-	//serialNumber=IIN1234567891011
-	//Signature is OK
+	// Signature N 1
+	// - CAdES-BES: verify signer certificate hash - OK.
+	// Verify - OK
+	// CMS Verify - OK
 }
 
 func ExampleClient_GetTimeFromSig() {
@@ -232,12 +230,7 @@ func ExampleClient_VerifyXML() {
 
 	signData, _ := cli.SignXML(data, false)
 
-	ver, _ := cli.VerifyXML(&types.VerifyInput{
-		SignatureBytes:    []byte(signData),
-		DataBytes:         []byte(data),
-		IsDetached:        false,
-		MustCheckCertTime: false,
-	})
+	ver, _ := cli.VerifyXML(signData, true)
 
 	fmt.Println(ver)
 	// Output:

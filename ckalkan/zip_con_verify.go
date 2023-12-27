@@ -14,7 +14,7 @@ import (
 )
 
 // ZipConVerify обеспечивает проверку подписи .zip архива.
-func (cli *Client) ZipConVerify(inZipFile string, flag Flag) (result string, err error) {
+func (cli *Client) ZipConVerify(inZipFile string, flags Flag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -38,7 +38,7 @@ func (cli *Client) ZipConVerify(inZipFile string, flag Flag) (result string, err
 
 	rc := int(C.zipConVerify(
 		cInZipFile,
-		C.int(int(flag)),
+		C.int(int(flags)),
 		(*C.char)(outVerifyInfo),
 		(*C.int)(unsafe.Pointer(&outVerifyInfoLen)),
 	))

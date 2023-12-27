@@ -14,7 +14,7 @@ import (
 )
 
 // GetSigAlgFromXML обеспечивает получение алгоритма подписи из XML.
-func (cli *Client) GetSigAlgFromXML(xml_in string) (sigAlg string, err error) {
+func (cli *Client) GetSigAlgFromXML(xmlIn string) (sigAlg string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -29,7 +29,7 @@ func (cli *Client) GetSigAlgFromXML(xml_in string) (sigAlg string, err error) {
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 
-	cXML := C.CString(xml_in)
+	cXML := C.CString(xmlIn)
 	defer C.free(unsafe.Pointer(cXML))
 
 	retLen := 50000
@@ -38,7 +38,7 @@ func (cli *Client) GetSigAlgFromXML(xml_in string) (sigAlg string, err error) {
 
 	rc := int(C.getSigAlgFromXML(
 		cXML,
-		C.int(len(xml_in)),
+		C.int(len(xmlIn)),
 		(*C.char)(retSigAlg),
 		(*C.int)(unsafe.Pointer(&retLen)),
 	))

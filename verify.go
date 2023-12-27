@@ -41,23 +41,10 @@ func (cli *Client) Verify(input *types.VerifyInput) (string, error) {
 }
 
 // VerifyXML обеспечивает проверку подписи данных в формате XML.
-func (cli *Client) VerifyXML(input *types.VerifyInput) (result string, err error) {
-	var (
-		flags     ckalkan.Flag
-		signedXML string
-	)
+func (cli *Client) VerifyXML(signedXML string, mustCheckCertTime bool) (result string, err error) {
+	var flags ckalkan.Flag
 
-	signedXML = string(input.SignatureBytes)
-
-	if input.IsDetached {
-		flags |= ckalkan.FlagIn2Base64
-		flags |= ckalkan.FlagDetachedData
-
-	} else {
-		flags |= ckalkan.FlagOutBase64
-	}
-
-	if !input.MustCheckCertTime {
+	if mustCheckCertTime {
 		flags |= ckalkan.FlagNoCheckCertTime
 	}
 

@@ -6,22 +6,18 @@ import (
 	"github.com/gokalkan/gokalkan/ckalkan"
 )
 
-// GetTimeFromSig получает время подписания из CMS
+// GetTimeFromSig получает время подписания из CMS в кодировке DER.
 // Если вы хотите пeредать данные подписи в base64 формате, то установите флаг base64 = true
-func (cli *Client) GetTimeFromSig(data string, base64 bool) (time.Time, error) {
-	var flag ckalkan.Flag
+func (cli *Client) GetTimeFromSig(cmsDer []byte) (time.Time, error) {
+	var flags ckalkan.Flag
 
-	flag = ckalkan.FlagInDER
+	flags = ckalkan.FlagInDER
 
-	if base64 {
-		flag = ckalkan.FlagInBase64
-	}
-
-	return cli.kc.GetTimeFromSig(data, flag, 0)
+	return cli.kc.GetTimeFromSig(string(cmsDer), flags, 0)
 }
 
 // X509CertificateGetInfo Обеспечивает получение значений полей/расширений из сертификата
-// Сертификат должен быть предварительно загружен с помощью одной из функций: LoadKeyStore(), X509LoadCertificateFromFile(),X509LoadCertificateFromBuffer().
+// Сертификат должен быть предварительно загружен с помощью одной из функций: LoadKeyStore(), X509LoadCertificateFromFile().
 // Укажите необходимые строки полей в срезе fields из мапы ckalkan.CertPropMap
 func (cli *Client) X509CertificateGetInfo(inCert string, fields []string) (string, error) {
 	var res string
@@ -34,4 +30,9 @@ func (cli *Client) X509CertificateGetInfo(inCert string, fields []string) (strin
 		res += result + "\n"
 	}
 	return res[:len(res)-1], nil
+}
+
+// GetSigAlgFromXML обеспечивает получение алгоритма подписи из XML.
+func (cli *Client) GetSigAlgFromXML(xml string) (string, error) {
+	return cli.kc.GetSigAlgFromXML(xml)
 }

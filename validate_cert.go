@@ -1,32 +1,39 @@
 package gokalkan
 
 import (
+	"encoding/pem"
 	"github.com/gokalkan/gokalkan/ckalkan"
+	kalkanTypes "github.com/gokalkan/gokalkan/types"
 )
 
-func (cli *Client) ValidateCert(cert string) (string, error) {
-	validateType := ckalkan.ValidateTypeNothing
-	validatePath := ""
-
+func (cli *Client) ValidateCert(input *kalkanTypes.ValidateCertInput) (string, error) {
 	var flags ckalkan.Flag
 
-	flags |= ckalkan.FlagNoCheckCertTime
+	validateType, validatePath := setValidationParams(input)
 
-	return cli.kc.X509ValidateCertificate(cert, validateType, validatePath, flags)
-}
+	certPEM := string(pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: input.Certificate.Raw,
+	}))
 
-func (cli *Client) ValidateCertOCSP(cert string, url ...string) (string, error) {
-	validateType := ckalkan.ValidateTypeOCSP
-	validatePath := cli.o.OCSP
-
-	var flags ckalkan.Flag
-
-	flags |= ckalkan.FlagNoCheckCertTime
-
-	if len(url) > 0 {
-		validatePath = url[0]
+	if !input.CheckCertTime {
+		flags |= ckalkan.FlagNoCheckCertTime
 	}
 
-	return cli.kc.X509ValidateCertificate(cert, validateType, validatePath, flags)
+	return cli.kc.X509ValidateCertificate(certPEM, validateType, validatePath, flags)
+}
 
+func setValidationParams(input *kalkanTypes.ValidateCertInput) (validateType ckalkan.ValidateType, validatePath string) {
+	switch input.ValidateType {
+	case kalkanTypes.ValidateOCSP:
+		validateType = ckalkan.ValidateTypeOCSP
+		validatePath = input.OCSPUrl
+	case kalkanTypes.ValidateCRL:
+		validateType = ckalkan.ValidateTypeCRL
+		validatePath = input.CRLPath
+	case kalkanTypes.ValidateNothing:
+		validateType = ckalkan.ValidateTypeNothing
+		validatePath = ""
+	}
+	return validateType, validatePath
 }
