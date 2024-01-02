@@ -32,7 +32,7 @@ type VerifiedData struct {
 }
 
 // VerifyData обеспечивает проверку подписи.
-func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *VerifiedData, err error) {
+func (cli *Client) VerifyData(inSign, inData, alias string, flags Flag) (result *VerifiedData, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -71,7 +71,7 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 
 	rc := int(C.verifyData(
 		kcAlias,
-		C.int(flag),
+		C.int(flags),
 		kcInData,
 		C.int(inDataLength),
 		(*C.uchar)(kcInSign),

@@ -6,18 +6,19 @@ import (
 	"strings"
 
 	"github.com/gokalkan/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan/types"
 )
 
 // Sign подписывает данные и возвращает CMS с подписью.
-func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte, err error) {
-	dataB64 := base64.StdEncoding.EncodeToString(data)
+func (cli *Client) Sign(input *types.SignInput) (signature []byte, err error) {
+	dataB64 := base64.StdEncoding.EncodeToString(input.DataBytes)
 	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
 
-	if withTSP {
+	if input.WithTSP {
 		flags |= ckalkan.FlagWithTimestamp
 	}
 
-	if isDetached {
+	if input.IsDetached {
 		flags |= ckalkan.FlagDetachedData
 	}
 
@@ -30,13 +31,40 @@ func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte
 }
 
 // SignXML подписывает данные в формате XML.
-func (cli *Client) SignXML(xmlData string) (string, error) {
-	return cli.kc.SignXML(xmlData, "", 0, "", "", "")
+func (cli *Client) SignXML(input *types.SignXMLInput) (string, error) {
+	var flags ckalkan.Flag
+
+	if input.WithTSP {
+		flags = ckalkan.FlagWithTimestamp
+	}
+
+	return cli.kc.SignXML(input.Data, "", flags, "", "", "")
 }
 
 func (cli *Client) SignWSSE(xmlData, id string) (string, error) {
 	soapEnvelope := WrapWithWSSESoapEnvelope(xmlData, id)
 	return cli.kc.SignWSSE(soapEnvelope, "", 0, id)
+}
+
+// SignHash подписывает hash и возвращает CMS с подписью.
+func (cli *Client) SignHash(input *types.SignHashInput) (signedHash []byte, err error) {
+	dataB64 := base64.StdEncoding.EncodeToString(input.InHash)
+	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
+
+	if input.WithTSP {
+		flags |= ckalkan.FlagWithTimestamp
+	}
+
+	if input.IsDetached {
+		flags |= ckalkan.FlagDetachedData
+	}
+
+	signatureB64, err := cli.kc.SignHash(input.Algo, dataB64, flags)
+	if err != nil {
+		return nil, err
+	}
+
+	return base64.StdEncoding.DecodeString(signatureB64)
 }
 
 const (

@@ -16,7 +16,7 @@ import (
 )
 
 // SignData используется для подписи текста в формате base64.
-func (cli *Client) SignData(inSign, inData, alias string, flag Flag) (result string, err error) {
+func (cli *Client) SignData(inSign, inData, alias string, flags Flag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -48,7 +48,7 @@ func (cli *Client) SignData(inSign, inData, alias string, flag Flag) (result str
 
 	rc := int(C.signData(
 		kcAlias,
-		C.int(int(flag)),
+		C.int(int(flags)),
 		kcInData,
 		C.int(inDataLength),
 		(*C.uchar)(kcInSign),

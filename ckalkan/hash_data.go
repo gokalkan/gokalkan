@@ -23,7 +23,7 @@ const (
 )
 
 // HashData возвращается хеш dataB64 в base64.
-func (cli *Client) HashData(algo HashAlgo, dataB64 string, flag Flag) (result string, err error) {
+func (cli *Client) HashData(algo HashAlgo, dataB64 string, flags Flag) (result string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -51,7 +51,7 @@ func (cli *Client) HashData(algo HashAlgo, dataB64 string, flag Flag) (result st
 
 	rc := int(C.hashData(
 		kcAlgo,
-		C.int(int(flag)),
+		C.int(int(flags)),
 		kcInData,
 		C.int(inDataLength),
 		(*C.uchar)(outData),

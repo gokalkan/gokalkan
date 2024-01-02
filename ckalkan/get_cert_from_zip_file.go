@@ -4,8 +4,8 @@ package ckalkan
 // #include <dlfcn.h>
 // #include "KalkanCrypt.h"
 //
-// unsigned long getCertFromCMS(char *inCMS, int inCMSLen, int inSignId, int flags, char *outCert, int *outCertLength) {
-//     return kc_funcs->KC_GetCertFromCMS(inCMS, inCMSLen, inSignId, flags, outCert, outCertLength);
+// unsigned long getCertFromZipFile(char* inZipFile, int flags, int inSignID, char *outCert, int *outCertLength) {
+//  	return kc_funcs->KC_getCertFromZipFile(inZipFile, flags, inSignID, outCert, outCertLength);
 // }
 import "C"
 import (
@@ -13,8 +13,8 @@ import (
 	"unsafe"
 )
 
-// GetCertFromCMS обеспечивает получение сертификата из CMS.
-func (cli *Client) GetCertFromCMS(cms string, signID int, flags Flag) (cert string, err error) {
+// GetCertFromZipFile обеспечивает получение сертификата из .zip архива.
+func (cli *Client) GetCertFromZipFile(zipFile string, flags Flag, signID int) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -29,18 +29,17 @@ func (cli *Client) GetCertFromCMS(cms string, signID int, flags Flag) (cert stri
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 
-	cCMS := C.CString(cms)
-	defer C.free(unsafe.Pointer(cCMS))
+	cZipFile := C.CString(zipFile)
+	defer C.free(unsafe.Pointer(cZipFile))
 
-	outCertLen := 32768
+	outCertLen := 50000
 	outCert := C.malloc(C.ulong(C.sizeof_uchar * outCertLen))
 	defer C.free(outCert)
 
-	rc := int(C.getCertFromCMS(
-		cCMS,
-		C.int(len(cms)),
-		C.int(signID),
+	rc := int(C.getCertFromZipFile(
+		cZipFile,
 		C.int(int(flags)),
+		C.int(signID),
 		(*C.char)(outCert),
 		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))
@@ -53,4 +52,5 @@ func (cli *Client) GetCertFromCMS(cms string, signID int, flags Flag) (cert stri
 	cert = C.GoString((*C.char)(outCert))
 
 	return cert, nil
+
 }

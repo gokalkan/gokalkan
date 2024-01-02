@@ -15,7 +15,7 @@ import (
 )
 
 // SetProxy устанавливает прокси.
-func (cli *Client) SetProxy(flag Flag, proxyURL *url.URL) (err error) {
+func (cli *Client) SetProxy(flags Flag, proxyURL *url.URL) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -48,7 +48,7 @@ func (cli *Client) SetProxy(flag Flag, proxyURL *url.URL) (err error) {
 	defer C.free(unsafe.Pointer(cProxyPass))
 
 	rc := int(C.setProxy(
-		C.int(int(flag)),
+		C.int(int(flags)),
 		cProxyAddr,
 		cProxyPort,
 		cProxyUser,
