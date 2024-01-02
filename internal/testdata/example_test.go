@@ -23,7 +23,11 @@ func ExampleClient_Sign() {
 
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signData, _ := cli.Sign([]byte("Hello World!"), false, false)
+	signData, _ := cli.Sign(&types.SignInput{
+		DataBytes:  []byte("Hello"),
+		IsDetached: false,
+		WithTSP:    false,
+	})
 
 	signInBase64 := base64.StdEncoding.EncodeToString(signData)
 
@@ -47,7 +51,11 @@ func ExampleClient_Verify() {
 
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signData, _ := cli.Sign([]byte("Hello World!"), false, false)
+	signData, _ := cli.Sign(&types.SignInput{
+		DataBytes:  []byte("Hello"),
+		IsDetached: false,
+		WithTSP:    false,
+	})
 
 	ver, _ := cli.Verify(&types.VerifyInput{
 		SignatureBytes:    signData,
@@ -77,7 +85,11 @@ func ExampleClient_GetTimeFromSig() {
 
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signData, _ := cli.Sign([]byte("Hello World!"), false, true)
+	signData, _ := cli.cli.Sign(&types.SignInput{
+		DataBytes:  []byte("Hello"),
+		IsDetached: false,
+		WithTSP:    true,
+	})
 
 	signInBase64 := base64.StdEncoding.EncodeToString(signData)
 
@@ -129,7 +141,7 @@ func ExampleClient_X509ExportCertificateFromStore() {
 
 	fmt.Printf("Сертификат: %s\n", cert.Issuer)
 	// Output:
-	// Сертификат: CN=ҰКО 3.0 (GOST TEST),C=KZ 
+	// Сертификат: CN=ҰКО 3.0 (GOST TEST),C=KZ
 }
 
 func ExampleClient_X509CertificateGetInfo() {
@@ -147,18 +159,10 @@ func ExampleClient_X509CertificateGetInfo() {
 	// Подгружаем хранилище с паролем
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	// Заполняем необходимые поля
-	fields := []string{
-		"CertPropIssuerCountryName",
-		"CertPropNotAfter",
-		"CertPropOCSP",
-		"CertPropSubjectSurname",
-	}
-
 	// Экспортируем сертификат из хранилища
-	cert, _ := cli.X509ExportCertificateFromStore(true)
+	cert, _ := cli.X509ExportCertificateFromStore()
 
-	info, _ := cli.X509CertificateGetInfo(cert, fields)
+	info, _ := cli.X509CertificateGetInfo(cert)
 
 	fmt.Printf("Информация по сертификату: %s\n", info)
 	// Output:
@@ -180,7 +184,10 @@ func ExampleClient_GetCertFromXML() {
 	// Подгружаем хранилище с паролем
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signedXML, _ := cli.SignXML("<root>this is a sample</root>", true)
+	signedXML, _ := cli.SignXML(&types.SignXMLInput{
+		Data:    "<root>Hello</root>",
+		WithTSP: true,
+	})
 
 	cert, _ := cli.GetCertFromXML(signedXML, 0)
 
@@ -203,7 +210,10 @@ func ExampleClient_SignXML() {
 
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signData, _ := cli.SignXML("<root>Hello World!</root>", false)
+	signData, _ := cli.SignXML(&types.SignXMLInput{
+		Data:    "<root>Hello</root>",
+		WithTSP: false,
+	})
 
 	fmt.Printf("Подписанные данные:\n%s", signData)
 	// Output:
@@ -228,9 +238,15 @@ func ExampleClient_VerifyXML() {
 
 	cli.LoadKeyStore(keyPath, keyPassword)
 
-	signData, _ := cli.SignXML(data, false)
+	signData, _ := cli.SignXML(&types.SignXMLInput{
+		Data:    "<root>Hello</root>",
+		WithTSP: false,
+	})
 
-	ver, _ := cli.VerifyXML(signData, true)
+	ver, _ := cli.VerifyXML(&types.VerifyXMLInput{
+		Signature:         sigXML,
+		MustCheckCertTime: false,
+	})
 
 	fmt.Println(ver)
 	// Output:
@@ -259,7 +275,12 @@ func ExampleClient_SignHash() {
 
 	inHash, _ := cli.HashSHA256([]byte(data))
 
-	signData, _ := cli.SignHash(ckalkan.HashAlgoSHA256, inHash, true, false)
+	signData, _ := cli.SignHash(&types.SignHashInput{
+		Algo:       ckalkan.HashAlgoSHA256,
+		InHash:     inHash,
+		IsDetached: true,
+		WithTSP:    false,
+	})
 
 	fmt.Println(signData)
 	// Output:
