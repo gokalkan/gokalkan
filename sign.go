@@ -6,18 +6,19 @@ import (
 	"strings"
 
 	"github.com/gokalkan/gokalkan/ckalkan"
+	"github.com/gokalkan/gokalkan/types"
 )
 
 // Sign подписывает данные и возвращает CMS с подписью.
-func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte, err error) {
-	dataB64 := base64.StdEncoding.EncodeToString(data)
+func (cli *Client) Sign(input *types.SignInput) (signature []byte, err error) {
+	dataB64 := base64.StdEncoding.EncodeToString(input.DataBytes)
 	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
 
-	if withTSP {
+	if input.WithTSP {
 		flags |= ckalkan.FlagWithTimestamp
 	}
 
-	if isDetached {
+	if input.IsDetached {
 		flags |= ckalkan.FlagDetachedData
 	}
 
@@ -30,14 +31,14 @@ func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte
 }
 
 // SignXML подписывает данные в формате XML.
-func (cli *Client) SignXML(xmlData string, withTSP bool) (string, error) {
+func (cli *Client) SignXML(input *types.SignXMLInput) (string, error) {
 	var flags ckalkan.Flag
 
-	if withTSP {
+	if input.WithTSP {
 		flags = ckalkan.FlagWithTimestamp
 	}
 
-	return cli.kc.SignXML(xmlData, "", flags, "", "", "")
+	return cli.kc.SignXML(input.Data, "", flags, "", "", "")
 }
 
 func (cli *Client) SignWSSE(xmlData, id string) (string, error) {
@@ -46,19 +47,19 @@ func (cli *Client) SignWSSE(xmlData, id string) (string, error) {
 }
 
 // SignHash подписывает hash и возвращает CMS с подписью.
-func (cli *Client) SignHash(algo ckalkan.HashAlgo, inHash []byte, isDetached, withTSP bool) (signedHash []byte, err error) {
-	dataB64 := base64.StdEncoding.EncodeToString(inHash)
+func (cli *Client) SignHash(input *types.SignHashInput) (signedHash []byte, err error) {
+	dataB64 := base64.StdEncoding.EncodeToString(input.InHash)
 	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagOutBase64
 
-	if withTSP {
+	if input.WithTSP {
 		flags |= ckalkan.FlagWithTimestamp
 	}
 
-	if isDetached {
+	if input.IsDetached {
 		flags |= ckalkan.FlagDetachedData
 	}
 
-	signatureB64, err := cli.kc.SignHash(algo, dataB64, flags)
+	signatureB64, err := cli.kc.SignHash(input.Algo, dataB64, flags)
 	if err != nil {
 		return nil, err
 	}
