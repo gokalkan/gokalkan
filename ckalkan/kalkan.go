@@ -1,11 +1,23 @@
 package ckalkan
 
 import (
+	"runtime"
 	"sync"
 )
 
+func getLibraryName() string {
+	switch runtime.GOOS {
+	case "freebsd":
+		return "libkalkancryptwr-64.so.2"
+	case "linux":
+		return "libkalkancryptwr-64.so"
+	default:
+		panic("GOOS=" + runtime.GOOS + " is not supported")
+	}
+}
+
 // требуемая библиотека для KC
-const dynamicLibs = "libkalkancryptwr-64.so"
+var dynamicLibs = getLibraryName()
 
 // Client структура для взаимодействия с библиотекой KC
 type Client struct {
