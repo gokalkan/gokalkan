@@ -33,13 +33,13 @@ func TestGetCertFromXML(t *testing.T) {
 	}
 
 	gotCrt, err := cli.GetCertFromXML(xml, 1)
-	gotCrt = "-----BEGIN CERTIFICATE-----\n" + gotCrt + "\n-----END CERTIFICATE-----\n"
 
 	if err != nil {
 		t.Fatal(err)
 	}
+	gotCrtStr := "-----BEGIN CERTIFICATE-----\n" + string(gotCrt[:]) + "\n-----END CERTIFICATE-----\n"
 
-	if gotCrt != key.Cert {
+	if gotCrtStr != key.Cert {
 		fmt.Printf("\ngot cert: \n<<<%s>>>\n", gotCrt)
 		fmt.Printf("\nexp cert: \n<<<%s>>>\n", key.Cert)
 		t.Fatal(key.Alias, " cert mismatch")

@@ -14,7 +14,7 @@ import (
 )
 
 // GetCertFromXML обеспечивает получение сертификата из XML.
-func (cli *Client) GetCertFromXML(xml string, signID int) (cert string, err error) {
+func (cli *Client) GetCertFromXML(xml string, signID int) (cert []byte, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -49,7 +49,7 @@ func (cli *Client) GetCertFromXML(xml string, signID int) (cert string, err erro
 		return cert, err
 	}
 
-	cert = C.GoString((*C.char)(outCert))
+	cert = C.GoBytes(unsafe.Pointer(outCert), C.int(outCertLen))
 
 	return cert, nil
 }
