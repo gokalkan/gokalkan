@@ -6,36 +6,7 @@ import (
 	"sync"
 
 	"github.com/gokalkan/gokalkan/ckalkan"
-)
-
-// Kalkan - это обертка над методами KalkanCrypt.
-type Kalkan interface {
-	LoadKeyStore(path, password string) (err error)
-	LoadKeyStoreFromBytes(key []byte, password string) (err error)
-
-	Sign(data []byte, isDetached, withTSP bool) (signature []byte, err error)
-	SignXML(xml string) (signedXML string, err error)
-	SignWSSE(xml, id string) (signedXML string, err error)
-
-	Verify(signature []byte) (string, error)
-	VerifyXML(signedXML string) (string, error)
-	VerifyDetached(signature, data []byte) (string, error)
-
-	GetCertFromCMS(cms []byte, signID int) (string, error)
-
-	ValidateCert(cert string) (string, error)
-	ValidateCertOCSP(cert string, url ...string) (string, error)
-
-	HashSHA256(data []byte) ([]byte, error)
-	HashGOST95(data []byte) ([]byte, error)
-	Close() error
-}
-
-var _ Kalkan = (*Client)(nil)
-
-var (
-	ErrInit    = errors.New("unable to refer to KC_GetFunctionList")
-	ErrHTTPCli = errors.New("http cli error")
+	"github.com/gokalkan/gokalkan/types"
 )
 
 type Client struct {
@@ -44,6 +15,13 @@ type Client struct {
 	o   Options
 	mu  sync.Mutex
 }
+
+var _ types.Kalkan = (*Client)(nil)
+
+var (
+	ErrInit    = errors.New("unable to refer to KC_GetFunctionList")
+	ErrHTTPCli = errors.New("http cli error")
+)
 
 // NewClient возвращает клиента для работы с KC.
 func NewClient(opts ...Option) (*Client, error) {
