@@ -92,8 +92,7 @@ type Kalkan interface {
 	HashSHA256(data []byte) ([]byte, error)
 	HashGOST95(data []byte) ([]byte, error)
 
-	SetProxyOn(proxyURL string) error
-	SetProxyOff(proxyURL string) error
+	SetProxy(flags ckalkan.Flag, proxyURL string) error
 
 	GetCertFromCMS(cms []byte) ([]*x509.Certificate, error)
 	GetCertFromXML(xml string) ([]*x509.Certificate, error)
