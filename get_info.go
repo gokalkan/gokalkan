@@ -32,9 +32,7 @@ var certPropMap = map[string]ckalkan.CertProp{
 // GetTimeFromSig получает время подписания из CMS в кодировке DER.
 // Если вы хотите пeредать данные подписи в base64 формате, то установите флаг base64 = true
 func (cli *Client) GetTimeFromSig(cmsDer []byte) (time.Time, error) {
-	var flags ckalkan.Flag
-
-	flags = ckalkan.FlagInDER
+	flags := ckalkan.FlagInDER
 
 	return cli.kc.GetTimeFromSig(string(cmsDer), flags, 0)
 }
@@ -46,7 +44,6 @@ func (cli *Client) GetSigAlgFromXML(xml string) (string, error) {
 
 // X509CertificateGetInfo Обеспечивает получение значений полей/расширений из сертификата в виде структуры *types.CertificateInfo.
 func (cli *Client) X509CertificateGetInfo(input *x509.Certificate) (*types.CertificateInfo, error) {
-
 	resultCertificateInfo := &types.CertificateInfo{}
 	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: input.Raw})
 	certPEMString := string(certPEM)
