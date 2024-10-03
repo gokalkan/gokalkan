@@ -37,10 +37,9 @@ type (
 		DN         string
 	}
 	CertOrganization struct {
-		Name         string
-		BIN          string
-		SubjectRole  CertSubjectRole
-		SubjectEmail string
+		Name        string
+		BIN         string
+		SubjectRole CertSubjectRole
 	}
 	CertIssuer struct {
 		CommonName string

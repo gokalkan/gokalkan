@@ -106,13 +106,6 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 			return nil, err
 		}
 
-		if summary.Organization.SubjectEmail, err = cli.kc.X509CertificateGetInfo(
-			cert,
-			ckalkan.CertPropSubjectEmail,
-		); err != nil {
-			return nil, err
-		}
-
 		if summary.Organization.BIN, err = cli.kc.X509CertificateGetInfo(
 			cert,
 			ckalkan.CertPropSubjectSerialNumber,
