@@ -31,29 +31,31 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	)
 
 	if summary.Subject.CommonName, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectCommonName,
+		cert, ckalkan.CertPropSubjectCommonName,
 	); err != nil {
 		return nil, err
 	}
+
+	summary.Subject.CommonName = cleanupValue(summary.Subject.CommonName, "=")
 
 	if summary.Subject.LastName, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectGivenName,
+		cert, ckalkan.CertPropSubjectGivenName,
 	); err != nil {
 		return nil, err
 	}
+
+	summary.Subject.LastName = cleanupValue(summary.Subject.LastName, "=")
 
 	if summary.Subject.Country, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectCountryName,
+		cert, ckalkan.CertPropSubjectCountryName,
 	); err != nil {
 		return nil, err
 	}
 
+	summary.Subject.Country = cleanupValue(summary.Subject.Country, "=")
+
 	if summary.Subject.IIN, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectSerialNumber,
+		cert, ckalkan.CertPropSubjectSerialNumber,
 	); err != nil {
 		return nil, err
 	}
@@ -61,8 +63,7 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	summary.Subject.IIN = cleanupValue(summary.Subject.IIN, "IIN")
 
 	if summary.Subject.DN, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectDN,
+		cert, ckalkan.CertPropSubjectDN,
 	); err != nil {
 		return nil, err
 	}
@@ -71,8 +72,7 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	extKeyUsage := ""
 
 	if extKeyUsage, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropExtKeyUsage,
+		cert, ckalkan.CertPropExtKeyUsage,
 	); err != nil {
 		return nil, err
 	}
@@ -97,23 +97,23 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	}
 
 	if summary.Type == CertTypeOrganization {
+		summary.Organization = &CertOrganization{}
+
 		if summary.Organization.Name, err = cli.kc.X509CertificateGetInfo(
-			cert,
-			ckalkan.CertPropSubjectOrgName,
+			cert, ckalkan.CertPropSubjectOrgName,
 		); err != nil {
 			return nil, err
 		}
+
+		summary.Organization.Name = cleanupValue(summary.Organization.Name, "=")
 
 		if summary.Organization.BIN, err = cli.kc.X509CertificateGetInfo(
-			cert,
-			ckalkan.CertPropSubjectSerialNumber,
+			cert, ckalkan.CertPropSubjectOrgUnitName,
 		); err != nil {
 			return nil, err
 		}
 
-		if parts := strings.Split(summary.Organization.BIN, "BIN"); len(parts) == 2 {
-			summary.Organization.BIN = parts[1]
-		}
+		summary.Organization.BIN = cleanupValue(summary.Organization.BIN, "BIN")
 
 		if _, exists := ekum[oidSubjectRoleCEO]; exists {
 			summary.Organization.SubjectRole = CertSubjectRoleCEO
@@ -129,18 +129,20 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	}
 
 	if summary.Issuer.CommonName, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropIssuerCommonName,
+		cert, ckalkan.CertPropIssuerCommonName,
 	); err != nil {
 		return nil, err
 	}
 
+	summary.Issuer.CommonName = cleanupValue(summary.Issuer.CommonName, "=")
+
 	if summary.Issuer.Country, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropIssuerCountryName,
+		cert, ckalkan.CertPropIssuerCountryName,
 	); err != nil {
 		return nil, err
 	}
+
+	summary.Issuer.Country = cleanupValue(summary.Issuer.Country, "=")
 
 	if summary.Issuer.DN, err = cli.kc.X509CertificateGetInfo(
 		cert,
@@ -205,7 +207,7 @@ func extractValueInBrackets(entry string) (string, bool) {
 
 func cleanupValue(value string, s string) string {
 	if parts := strings.Split(value, s); len(parts) == 2 {
-		return parts[1]
+		return strings.TrimSpace(parts[1])
 	}
 
 	return value

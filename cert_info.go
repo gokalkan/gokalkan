@@ -20,7 +20,7 @@ type (
 	Summary struct {
 		Type         CertType
 		Subject      CertSubject
-		Organization CertOrganization
+		Organization *CertOrganization
 		Issuer       CertIssuer
 		PublicKey    string
 		SerialNumber string
