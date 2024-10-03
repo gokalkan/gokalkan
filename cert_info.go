@@ -35,12 +35,12 @@ type (
 		Country    string
 		IIN        string
 		DN         string
-		Email      string
 	}
 	CertOrganization struct {
-		Name        string
-		BIN         string
-		SubjectRole CertSubjectRole
+		Name         string
+		BIN          string
+		SubjectRole  CertSubjectRole
+		SubjectEmail string
 	}
 	CertIssuer struct {
 		CommonName string

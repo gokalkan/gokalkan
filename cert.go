@@ -69,13 +69,6 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		return nil, err
 	}
 
-	if summary.Subject.Email, err = cli.kc.X509CertificateGetInfo(
-		cert,
-		ckalkan.CertPropSubjectEmail,
-	); err != nil {
-		return nil, err
-	}
-
 	ekum := make(map[string]bool)
 	extKeyUsage := ""
 
@@ -109,6 +102,13 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		if summary.Organization.Name, err = cli.kc.X509CertificateGetInfo(
 			cert,
 			ckalkan.CertPropSubjectOrgName,
+		); err != nil {
+			return nil, err
+		}
+
+		if summary.Organization.SubjectEmail, err = cli.kc.X509CertificateGetInfo(
+			cert,
+			ckalkan.CertPropSubjectEmail,
 		); err != nil {
 			return nil, err
 		}
