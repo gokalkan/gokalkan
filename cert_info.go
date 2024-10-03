@@ -3,8 +3,8 @@ package gokalkan
 import "time"
 
 const (
-	CertTypeIndividual CertType = iota
-	CertTypeOrganization
+	CertTypeIndividual   = "individual"
+	CertTypeOrganization = "organization"
 )
 
 const (
@@ -27,7 +27,7 @@ type (
 		NotAfter     time.Time
 		NotBefore    time.Time
 	}
-	CertType        int
+	CertType        string
 	CertSubjectRole int
 	CertSubject     struct {
 		CommonName string

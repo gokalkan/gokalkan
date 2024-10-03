@@ -58,9 +58,7 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		return nil, err
 	}
 
-	if parts := strings.Split(summary.Subject.IIN, "IIN"); len(parts) == 2 {
-		summary.Subject.IIN = parts[1]
-	}
+	summary.Subject.IIN = cleanupValue(summary.Subject.IIN, "IIN")
 
 	if summary.Subject.DN, err = cli.kc.X509CertificateGetInfo(
 		cert,
@@ -203,4 +201,12 @@ func extractValueInBrackets(entry string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func cleanupValue(value string, s string) string {
+	if parts := strings.Split(value, s); len(parts) == 2 {
+		return parts[1]
+	}
+
+	return value
 }
