@@ -127,6 +127,34 @@ fmt.Println("Подписанный XML в формате WSSE", signedXML)
 fmt.Println("Ошибка", err)
 ```
 
+### Получение времени когда был подписан документ 2 подписантом
+
+```go
+signTime, err := c.GetTimeFromSig(cmsFileBody, 1)
+
+fmt.Println("Время подписи", signTime)
+fmt.Println("Ошибка", err)
+```
+
+### Получение значение поля из сертификата
+
+```go
+value, err := c.X509CertificateGetInfo(certBody)
+
+fmt.Println("Значение", value)
+fmt.Println("Ошибка", err)
+```
+
+### Получение сводной информации о сертификате
+
+```go
+info, err := c.X509CertificateGetSummary(certBody)
+
+fmt.Println("Информация", info)
+fmt.Println("Ошибка", err)
+```
+
+
 ## Бенчмарки
 
 Команда запуска бенчмарка:
