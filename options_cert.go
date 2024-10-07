@@ -30,10 +30,12 @@ func WithRemoteProdCerts(ctx context.Context) Option {
 	pairs := []pair{
 		{url: "https://pki.gov.kz/cert/root_gost.crt", certType: ckalkan.CertTypeCA},
 		{url: "https://pki.gov.kz/cert/root_rsa.crt", certType: ckalkan.CertTypeCA},
-		{url: "https://pki.gov.kz/cert/root_gost2015_2022.cer", certType: ckalkan.CertTypeCA},
-		{url: "https://pki.gov.kz/cert/nca_gost.crt", certType: ckalkan.CertTypeIntermediate},
-		{url: "https://pki.gov.kz/cert/nca_rsa.crt", certType: ckalkan.CertTypeIntermediate},
-		{url: "https://pki.gov.kz/cert/nca_gost2015.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://pki.gov.kz/cert/root_rsa_2020.cer", certType: ckalkan.CertTypeCA},
+		{url: "https://pki.gov.kz/cert/root_gost_2022.cer", certType: ckalkan.CertTypeCA},
+		{url: "https://pki.gov.kz/cert/nca_gost.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://pki.gov.kz/cert/nca_rsa.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://pki.gov.kz/cert/nca_rsa_2022.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://pki.gov.kz/cert/nca_gost_2022.cer", certType: ckalkan.CertTypeIntermediate},
 	}
 
 	return func(o *Options) {
@@ -57,10 +59,12 @@ func WithRemoteTestCerts(ctx context.Context) Option {
 		certType ckalkan.CertType
 	}
 	pairs := []pair{
-		{url: "http://test.pki.gov.kz/cert/root_gost_test.cer", certType: ckalkan.CertTypeCA},
-		{url: "http://test.pki.gov.kz/cert/root_rsa_test.cer", certType: ckalkan.CertTypeCA},
-		{url: "http://test.pki.gov.kz/cert/nca_gost_test.cer", certType: ckalkan.CertTypeIntermediate},
-		{url: "http://test.pki.gov.kz/cert/nca_rsa_test.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://test.pki.gov.kz/cert/root_gost_test.cer", certType: ckalkan.CertTypeCA},
+		{url: "https://test.pki.gov.kz/cert/root_rsa_test.cer", certType: ckalkan.CertTypeCA},
+		{url: "https://test.pki.gov.kz/cert/root_test_gost_2022.cer", certType: ckalkan.CertTypeCA},
+		{url: "https://test.pki.gov.kz/cert/nca_gost_test.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://test.pki.gov.kz/cert/nca_rsa_test.cer", certType: ckalkan.CertTypeIntermediate},
+		{url: "https://test.pki.gov.kz/cert/nca_gost2022_test.cer", certType: ckalkan.CertTypeIntermediate},
 	}
 
 	return func(o *Options) {

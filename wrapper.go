@@ -22,9 +22,12 @@ type Kalkan interface {
 	VerifyDetached(signature, data []byte) (string, error)
 
 	GetCertFromCMS(cms []byte, signID int) (string, error)
+	GetCertFromXML(xml string, signID int) ([]byte, error)
 
 	ValidateCert(cert string) (string, error)
 	ValidateCertOCSP(cert string, url ...string) (string, error)
+
+	X509CertificateGetInfo(inCert string, prop int) (string, error)
 
 	HashSHA256(data []byte) ([]byte, error)
 	HashGOST95(data []byte) ([]byte, error)

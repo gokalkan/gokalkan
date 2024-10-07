@@ -5,7 +5,7 @@ package ckalkan
 // #include "KalkanCrypt.h"
 //
 // unsigned long getCertificatesList(char *certificates, unsigned long *cert_count) {
-//     kc_funcs->KC_GetCertificatesList(certificates, cert_count);
+//     return kc_funcs->KC_GetCertificatesList(certificates, cert_count);
 // }
 import "C"
 import (

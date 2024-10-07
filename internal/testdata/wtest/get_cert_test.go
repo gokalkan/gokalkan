@@ -24,3 +24,24 @@ func TestGetCertFromCMS(t *testing.T) {
 		t.Fatal(key.Alias, " cert mismatch")
 	}
 }
+
+func TestGetCertFromXML(t *testing.T) {
+	xml, err := cli.SignXML("<root>GoKalkan</root>")
+
+	if err != nil {
+		t.Fatalf("%s: %s", key.Alias, err)
+	}
+
+	gotCrt, err := cli.GetCertFromXML(xml, 1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotCrtStr := "-----BEGIN CERTIFICATE-----\n" + string(gotCrt[:]) + "\n-----END CERTIFICATE-----\n"
+
+	if gotCrtStr != key.Cert {
+		fmt.Printf("\ngot cert: \n<<<%s>>>\n", gotCrt)
+		fmt.Printf("\nexp cert: \n<<<%s>>>\n", key.Cert)
+		t.Fatal(key.Alias, " cert mismatch")
+	}
+}
