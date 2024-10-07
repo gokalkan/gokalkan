@@ -139,7 +139,7 @@ fmt.Println("Ошибка", err)
 ### Получение значение поля из сертификата
 
 ```go
-value, err := c.X509CertificateGetInfo(certBody)
+value, err := c.X509CertificateGetInfo(certBody, ckalkan.CertPropSubjectCommonName)
 
 fmt.Println("Значение", value)
 fmt.Println("Ошибка", err)
