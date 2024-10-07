@@ -137,6 +137,7 @@ fmt.Println("Ошибка", err)
 ```
 
 ### Получение значение поля из сертификата
+Внимание! Сертификат должен быть в формате PEM.
 
 ```go
 value, err := c.X509CertificateGetInfo(certBody, ckalkan.CertPropSubjectCommonName)
@@ -146,6 +147,7 @@ fmt.Println("Ошибка", err)
 ```
 
 ### Получение сводной информации о сертификате
+Внимание! Сертификат должен быть в формате PEM.
 
 ```go
 info, err := c.X509CertificateGetSummary(certBody)
