@@ -30,6 +30,18 @@ KalkanCrypt является основной библиотекой для ра
 
 Сертификаты лежат по пути `SDK/C/Linux/ca-certs/Ubuntu`. В папке находятся два типа сертификатов - `production` и `test`. Для их установки приготовлены скрипты в той же директории. При запуске понадобятся sudo права.
 
+> ERROR 0x8f00042: Load certificate from system store - failed to load root or intermediate certificate. Unable convert to X509.
+```
+решил проблему
+проблема была в root учетке linux
+то есть нужно была 2 раза делать установку сертификатов как под обычным пользователем и root
+
+а также нужно было скачать все сертификаты с сайта и установить в папку /usr/local/share/ca-certificates/extra
+затем нужно было также 2 раза делать update-ca-certificates под обычным и root
+
+https://pki.gov.kz/cert/
+```
+
 #### 3. Скопировать .so файлы
 
 Файлы лежат в директории `SDK 2.0/C/Linux/C/libs/v2.0.4`. Команда для копирования:
