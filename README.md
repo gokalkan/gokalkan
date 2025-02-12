@@ -40,6 +40,13 @@ KalkanCrypt является основной библиотекой для ра
 затем нужно было также 2 раза делать update-ca-certificates под обычным и root
 
 https://pki.gov.kz/cert/
+
+update-ca-certificates
+```
+
+```
+apt install libltdl7
+apt install libpcsclite1
 ```
 
 #### 3. Скопировать .so файлы
