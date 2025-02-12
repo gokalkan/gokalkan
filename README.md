@@ -44,16 +44,14 @@ https://pki.gov.kz/cert/
 update-ca-certificates
 ```
 
-```
-apt install libltdl7
-apt install libpcsclite1
-```
-
 #### 3. Скопировать .so файлы
 
 Файлы лежат в директории `SDK 2.0/C/Linux/C/libs/v2.0.4`. Команда для копирования:
 
 ```sh
+apt install libltdl7
+apt install libpcsclite1
+
 sudo cp -f libkalkancryptwr-64.so.2.0.4 /usr/lib/libkalkancryptwr-64.so
 ```
 
