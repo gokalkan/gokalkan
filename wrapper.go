@@ -57,6 +57,10 @@ func NewClient(opts ...Option) (*Client, error) {
 		op(&o)
 	}
 
+	if o.LibraryPath != nil {
+		ckalkan.SetLibraryPath(*o.LibraryPath)
+	}
+
 	kc, err := ckalkan.NewClient()
 	if err != nil {
 		return nil, err

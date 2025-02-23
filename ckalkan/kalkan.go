@@ -19,6 +19,10 @@ func getLibraryName() string {
 // требуемая библиотека для KC
 var dynamicLibs = getLibraryName()
 
+func SetLibraryPath(path string) {
+	dynamicLibs = path
+}
+
 // Client структура для взаимодействия с библиотекой KC
 type Client struct {
 	handler *libHandle
