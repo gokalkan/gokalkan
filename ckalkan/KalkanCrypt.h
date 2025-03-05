@@ -38,9 +38,9 @@ extern "C" {
 #define KCST_ETOKEN5110		0x00000080
 	
 //---------------------------------------------------------------------------------------
-/*
+	/*
     Формат импорта/экспорта сертификата
-*/
+	*/
 
 #define KC_CERT_DER			0x00000101
 #define KC_CERT_PEM			0x00000102
@@ -118,6 +118,8 @@ extern "C" {
 
 #define KC_CERTPROP_PUBKEY					0x0000081d
 
+#define	KC_CERTPROP_POLICIES_ID				0x0000081e
+
 //---------------------------------------------------------------------------------------
 
 //--- KALKANCRYPTCOM_FLAGS ---
@@ -140,6 +142,7 @@ extern "C" {
 #define KC_NOCHECKCERTTIME	0x00010000
 #define KC_HASH_SHA256		0x00020000
 #define KC_HASH_GOST95		0x00040000
+#define KC_GET_OCSP_RESPONSE		0x00080000
 
 
 //---------------------------------------------------------------------------------------
@@ -258,11 +261,12 @@ typedef struct stKCFunctions {
 	unsigned long(*X509ExportCertificateFromStore)(char *alias, int flag, char *outCert, int *outCertLength);
 	unsigned long(*X509CertificateGetInfo)(char *inCert, int inCertLength, int propId, unsigned char *outData, int *outDataLength);
 	unsigned long(*X509ValidateCertificate)(char *inCert, int inCertLength, int validType, char *validPath, long long checkTime, char *outInfo, int *outInfoLength, int flags, char* getResp, int *getRespLength);
-
+	
 	unsigned long(*HashData)(char *algorithm, int flags, char *inData, int inDataLength, unsigned char *outData, int *outDataLength);
 	unsigned long(*SignHash)(char *alias, int flags, char *inHash, int inHashLength, unsigned char *outSign, int *outSignLength);
 
 	unsigned long(*SignData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inSign, int inSignLen, unsigned char *outSign, int *outSignLength);
+	unsigned long(*SignDataArchive)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inSign, int inSignLen, char *validPath, unsigned char *outSign, int *outSignLength);
 	unsigned long(*SignXML)(char *alias, int flags, char *inData, int inDataLength, unsigned char *outSign, int *outSignLength, char *signNodeId, char *parentSignNode, char *parentNameSpace);
 
 	unsigned long(*VerifyData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inoutSign, int inoutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength);
@@ -287,6 +291,8 @@ typedef struct stKCFunctions {
 	unsigned long (*ZipConVerify)(char *inZipFile, int flags, char *outVerifyInfo, int *outVerifyInfoLen);
 	unsigned long (*ZipConSign)(char *alias, const char *filePath, const char *name, const char *outDir, int flags);
 	unsigned long(*KC_getCertFromZipFile)(char* inZipFile, int flags, int inSignID, char *outCert, int *outCertLength);
+	unsigned long (*UVerifyData)(char *alias, int flags, char *inData, int inDataLength, unsigned char *inOutSign, int inOutSignLength, char *outData, int *outDataLen, char *outVerifyInfo, int *outVerifyInfoLen, int inCertID, char *outCert, int *outCertLength);
+	void(*KC_InitDebug)(void);
 
 } stKCFunctionsType;
 
