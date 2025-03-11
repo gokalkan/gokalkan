@@ -25,3 +25,4 @@ internal/ca-prod
 internal/ca-production
 internal/ca-test
 internal/cmd
+.vscode
