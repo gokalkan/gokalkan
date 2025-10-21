@@ -30,11 +30,28 @@ KalkanCrypt является основной библиотекой для ра
 
 Сертификаты лежат по пути `SDK/C/Linux/ca-certs/Ubuntu`. В папке находятся два типа сертификатов - `production` и `test`. Для их установки приготовлены скрипты в той же директории. При запуске понадобятся sudo права.
 
+> ERROR 0x8f00042: Load certificate from system store - failed to load root or intermediate certificate. Unable convert to X509.
+```
+решил проблему
+проблема была в root учетке linux
+то есть нужно была 2 раза делать установку сертификатов как под обычным пользователем и root
+
+а также нужно было скачать все сертификаты с сайта и установить в папку /usr/local/share/ca-certificates/extra
+затем нужно было также 2 раза делать update-ca-certificates под обычным и root
+
+https://pki.gov.kz/cert/
+
+update-ca-certificates
+```
+
 #### 3. Скопировать .so файлы
 
 Файлы лежат в директории `SDK 2.0/C/Linux/C/libs/v2.0.4`. Команда для копирования:
 
 ```sh
+apt install libltdl7
+apt install libpcsclite1
+
 sudo cp -f libkalkancryptwr-64.so.2.0.4 /usr/lib/libkalkancryptwr-64.so
 ```
 
@@ -225,3 +242,10 @@ Please have a look at the [LICENSE.md](https://github.com/Zulbukharov/kalkancryp
 [pkg-url]: https://pkg.go.dev/github.com/gokalkan/gokalkan
 [reportcard-img]: https://goreportcard.com/badge/Zulbukharov/GoKalkan
 [reportcard-url]: https://goreportcard.com/report/Zulbukharov/GoKalkan
+
+## Tags
+
+```shell
+git tag -a v1.4.2-ex-1 -m "Release version v1.4.2-ex-1"
+git push origin v1.4.2-ex-1
+```
