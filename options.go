@@ -19,11 +19,12 @@ type OptionsCert struct {
 }
 
 type Options struct {
-	log       Logger
-	TSP       string        `json:"tsp"`   // URL метки времени
-	OCSP      string        `json:"ocsp"`  // URL сервиса онлайн проверки статуса сертификата
-	Certs     []OptionsCert `json:"certs"` // Корневые сертификатам
-	LoadCerts bool          `json:"load_certs"`
+	log         Logger
+	TSP         string        `json:"tsp"`   // URL метки времени
+	OCSP        string        `json:"ocsp"`  // URL сервиса онлайн проверки статуса сертификата
+	Certs       []OptionsCert `json:"certs"` // Корневые сертификатам
+	LoadCerts   bool          `json:"load_certs"`
+	LibraryPath *string       `json:"library_path"` // Путь до динамической библиотеки
 }
 
 func (o *Options) setDefaults() {
@@ -59,6 +60,15 @@ func WithTSP(u string) Option {
 func WithOCSP(u string) Option {
 	return func(o *Options) {
 		o.OCSP = u
+	}
+}
+
+/*
+Задать путь до динамической библиотеки Kalkan, если библиотека не установлена среди системных библиотек
+*/
+func WithDinamicLibraryPath(path string) Option {
+	return func(o *Options) {
+		o.LibraryPath = &path
 	}
 }
 
