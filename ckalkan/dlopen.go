@@ -8,10 +8,18 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"sync"
 	"unsafe"
 )
 
-var ErrHandler = errors.New("lib handler error")
+var (
+	ErrHandler = errors.New("lib handler error")
+
+	// Глобальный кэш для dlopen хэндла чтобы избежать множественных dlopen/dlclose
+	globalLibHandle *libHandle
+	handleMu        sync.Mutex
+	handleRefCount  int
+)
 
 // LibHandle represents an open handle to a library (.so)
 type libHandle struct {
@@ -23,9 +31,21 @@ type libHandle struct {
 // by the names specified in libs and returning the first that is successfully
 // opened. Callers are responsible for closing the handler. If no library can
 // be successfully opened, an error is returned.
+//
+// Кэширует хэндл библиотеки для избежания множественных dlopen/dlclose вызовов.
+// Использует счетчик ссылок для корректного управления памятью.
 func getHandle(name string) (*libHandle, error) {
-	libName := C.CString(name)
+	handleMu.Lock()
+	defer handleMu.Unlock()
 
+	// Проверяем существующий кэшированный хэндл
+	if globalLibHandle != nil {
+		handleRefCount++
+		return globalLibHandle, nil
+	}
+
+	// Создаем новый хэндл только если его еще нет
+	libName := C.CString(name)
 	defer C.free(unsafe.Pointer(libName))
 
 	handle := C.dlopen(libName, C.RTLD_LAZY)
@@ -34,6 +54,9 @@ func getHandle(name string) (*libHandle, error) {
 			Handle:  handle,
 			LibName: name,
 		}
+
+		globalLibHandle = h
+		handleRefCount = 1
 
 		return h, nil
 	}
@@ -60,7 +83,20 @@ func (l *libHandle) getSymbolPointer(symbol string) (unsafe.Pointer, error) {
 }
 
 // Close closes a LibHandle.
+// Использует счетчик ссылок: реальный dlclose вызывается только когда все клиенты закрыты.
 func (l *libHandle) close() error {
+	handleMu.Lock()
+	defer handleMu.Unlock()
+
+	// Декрементируем счетчик ссылок
+	handleRefCount--
+
+	// Закрываем библиотеку только когда больше нет активных ссылок
+	if handleRefCount > 0 {
+		return nil
+	}
+
+	// Вызываем реальный dlclose
 	C.dlerror()
 	C.dlclose(l.Handle)
 
@@ -68,6 +104,9 @@ func (l *libHandle) close() error {
 	if e != nil {
 		return fmt.Errorf("%w: error closing %s: %s", ErrHandler, l.LibName, C.GoString(e))
 	}
+
+	// Очищаем глобальный хэндл
+	globalLibHandle = nil
 
 	return nil
 }

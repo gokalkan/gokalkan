@@ -28,6 +28,7 @@ func (cli *Client) GetCertFromCMS(cms string, signID int, flag Flag) (cert strin
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	cCMS := C.CString(cms)
 	defer C.free(unsafe.Pointer(cCMS))
@@ -45,12 +46,16 @@ func (cli *Client) GetCertFromCMS(cms string, signID int, flag Flag) (cert strin
 		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))
 
-	err = cli.wrapError(rc)
-	if err != nil {
-		return cert, err
+	// Всегда копируем сертификат ДО проверки ошибки
+	if outCert != nil {
+		cert = C.GoString((*C.char)(outCert))
 	}
 
-	cert = C.GoString((*C.char)(outCert))
+	err = cli.wrapError(rc)
+	if err != nil {
+		// Возвращаем пустую строку при ошибке
+		return "", err
+	}
 
 	return cert, nil
 }

@@ -32,7 +32,10 @@ type VerifiedData struct {
 }
 
 // VerifyData обеспечивает проверку подписи.
-func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *VerifiedData, err error) {
+func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (
+	result *VerifiedData,
+	err error,
+) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -46,6 +49,7 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	kcAlias := C.CString(alias)
 	defer C.free(unsafe.Pointer(kcAlias))
@@ -58,32 +62,38 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 	defer C.free(kcInSign)
 	inputSignLength := len(inSign)
 
-	var kcOutData [outDataLength]byte
-	kcOutDataLen := outDataLength
+	dynamicOutDataLength := max(outDataLength, inputSignLength*3)
 
-	var kcOutVerifyInfo [outVerifyInfoLength]byte
-	kcOutVerifyInfoLen := outVerifyInfoLength
+	kcOutData := make([]byte, dynamicOutDataLength)
+	kcOutDataLen := dynamicOutDataLength
+
+	dynamicOutVerifyInfoLength := outVerifyInfoLength * 3
+	kcOutVerifyInfo := make([]byte, dynamicOutVerifyInfoLength)
+	kcOutVerifyInfoLen := dynamicOutVerifyInfoLength
+
+	dynamicOutCertLength := outCertLength * 3
+	kcOutCert := make([]byte, dynamicOutCertLength)
+	kcOutCertLen := dynamicOutCertLength
 
 	kcInCertID := 0
 
-	var kcOutCert [outCertLength]byte
-	kcOutCertLen := outCertLength
-
-	rc := int(C.verifyData(
-		kcAlias,
-		C.int(flag),
-		kcInData,
-		C.int(inDataLength),
-		(*C.uchar)(kcInSign),
-		C.int(inputSignLength),
-		(*C.char)(unsafe.Pointer(&kcOutData)),
-		(*C.int)(unsafe.Pointer(&kcOutDataLen)),
-		(*C.char)(unsafe.Pointer(&kcOutVerifyInfo)),
-		(*C.int)(unsafe.Pointer(&kcOutVerifyInfoLen)),
-		C.int(kcInCertID),
-		(*C.char)(unsafe.Pointer(&kcOutCert)),
-		(*C.int)(unsafe.Pointer(&kcOutCertLen)),
-	))
+	rc := int(
+		C.verifyData(
+			kcAlias,
+			C.int(flag),
+			kcInData,
+			C.int(inDataLength),
+			(*C.uchar)(kcInSign),
+			C.int(inputSignLength),
+			(*C.char)(unsafe.Pointer(&kcOutData[0])), // Используем первый элемент среза
+			(*C.int)(unsafe.Pointer(&kcOutDataLen)),
+			(*C.char)(unsafe.Pointer(&kcOutVerifyInfo[0])),
+			(*C.int)(unsafe.Pointer(&kcOutVerifyInfoLen)),
+			C.int(kcInCertID),
+			(*C.char)(unsafe.Pointer(&kcOutCert[0])),
+			(*C.int)(unsafe.Pointer(&kcOutCertLen)),
+		),
+	)
 
 	err = cli.wrapError(rc)
 	if err != nil {
@@ -91,9 +101,9 @@ func (cli *Client) VerifyData(inSign, inData, alias string, flag Flag) (result *
 	}
 
 	result = &VerifiedData{
-		Cert: byteSlice(kcOutCert[:]),
-		Info: byteSlice(kcOutVerifyInfo[:]),
-		Data: byteSlice(kcOutData[:]),
+		Cert: kcOutCert[:kcOutCertLen], // Ограничиваем фактическим размером
+		Info: kcOutVerifyInfo[:kcOutVerifyInfoLen],
+		Data: kcOutData[:kcOutDataLen],
 	}
 
 	return result, nil
@@ -106,4 +116,12 @@ func byteSlice(content []byte) []byte {
 		}
 	}
 	return content
+}
+
+// Вспомогательная функция max для Go < 1.21
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }

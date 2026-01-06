@@ -28,6 +28,7 @@ func (cli *Client) X509ExportCertificateFromStore(alias string) (result string, 
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	flag := 0
 	outCertLen := 32768
@@ -45,12 +46,16 @@ func (cli *Client) X509ExportCertificateFromStore(alias string) (result string, 
 		(*C.int)(unsafe.Pointer(&outCertLen)),
 	))
 
-	err = cli.wrapError(rc)
-	if err != nil {
-		return result, err
+	// Всегда копируем сертификат ДО проверки ошибки
+	if cert != nil {
+		result = C.GoString((*C.char)(cert))
 	}
 
-	result = C.GoString((*C.char)(cert))
+	err = cli.wrapError(rc)
+	if err != nil {
+		// Возвращаем пустую строку при ошибке
+		return "", err
+	}
 
 	return result, nil
 }

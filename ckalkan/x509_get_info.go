@@ -9,6 +9,7 @@ package ckalkan
 // }
 import "C"
 import (
+	"bytes"
 	"fmt"
 	"unsafe"
 )
@@ -31,24 +32,22 @@ func (cli *Client) X509CertificateGetInfo(inCert string, prop CertProp) (result 
 	cInCert := C.CString(inCert)
 	defer C.free(unsafe.Pointer(cInCert))
 
-	outDataLength := 32768
-	data := C.malloc(C.ulong(C.sizeof_char * outDataLength))
-	defer C.free(data)
+	outDataLength := C.int(50000)
+	outData := make([]byte, outDataLength)
 
-	rc := int(C.x509CertificateGetInfo(
-		cInCert,
-		C.int(len(inCert)),
-		C.int(int(prop)),
-		(*C.char)(data),
-		(*C.int)(unsafe.Pointer(&outDataLength)),
-	))
+	rc := int(
+		C.x509CertificateGetInfo(
+			cInCert,
+			C.int(len(inCert)),
+			C.int(prop),
+			(*C.char)(unsafe.Pointer(&outData[0])),
+			&outDataLength,
+		),
+	)
 
-	err = cli.wrapError(rc)
-	if err != nil {
-		return result, err
+	if err = cli.wrapError(rc); err != nil {
+		return "", err
 	}
 
-	result = C.GoString((*C.char)(data))
-
-	return result, nil
+	return string(bytes.Trim(outData[:outDataLength], "\x00")), nil
 }

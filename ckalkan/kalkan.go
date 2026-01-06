@@ -1,5 +1,13 @@
 package ckalkan
 
+// #cgo LDFLAGS: -ldl
+// #include <dlfcn.h>
+// #include <malloc.h>
+//
+// void force_defragment() {
+//     malloc_trim(0);
+// }
+import "C"
 import (
 	"runtime"
 	"sync"
@@ -38,4 +46,14 @@ func NewClient() (*Client, error) {
 	}
 
 	return cli, nil
+}
+
+// forceDefragmentation принудительно дефрагментирует C heap
+// Должно вызываться после каждой операции с C.malloc
+func (cli *Client) forceDefragmentation() {
+	// будет работать только под linux, как и сама либа
+	C.force_defragment()
+
+	// Принудительный сбор мусора Go для освобождения heap
+	runtime.GC()
 }

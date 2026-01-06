@@ -30,6 +30,7 @@ func (cli *Client) SignData(inSign, inData, alias string, flag Flag) (result str
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	kcAlias := C.CString(alias)
 	defer C.free(unsafe.Pointer(kcAlias))
@@ -46,16 +47,29 @@ func (cli *Client) SignData(inSign, inData, alias string, flag Flag) (result str
 	kcInSign := unsafe.Pointer(C.CString(inSign))
 	defer C.free(kcInSign)
 
-	rc := int(C.signData(
-		kcAlias,
-		C.int(int(flag)),
-		kcInData,
-		C.int(inDataLength),
-		(*C.uchar)(kcInSign),
-		C.int(kcInSignLength),
-		(*C.uchar)(outSign),
-		(*C.int)(unsafe.Pointer(&outSignLength)),
-	))
+	rc := int(
+		C.signData(
+			kcAlias,
+			C.int(int(flag)),
+			kcInData,
+			C.int(inDataLength),
+			(*C.uchar)(kcInSign),
+			C.int(kcInSignLength),
+			(*C.uchar)(outSign),
+			(*C.int)(unsafe.Pointer(&outSignLength)),
+		),
+	)
 
-	return C.GoString((*C.char)(outSign)), cli.wrapError(rc)
+	// Всегда копируем результат подписи ДО проверки ошибки
+	if outSign != nil {
+		result = C.GoString((*C.char)(outSign))
+	}
+
+	err = cli.wrapError(rc)
+	if err != nil {
+		// Возвращаем пустую строку при ошибке
+		return "", err
+	}
+
+	return result, nil
 }

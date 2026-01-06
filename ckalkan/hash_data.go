@@ -37,6 +37,7 @@ func (cli *Client) HashData(algo HashAlgo, dataB64 string, flag Flag) (result st
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	kcAlgo := C.CString(string(algo))
 	defer C.free(unsafe.Pointer(kcAlgo))
@@ -49,14 +50,27 @@ func (cli *Client) HashData(algo HashAlgo, dataB64 string, flag Flag) (result st
 	outData := C.malloc(C.ulong(C.sizeof_uchar * outDataLength))
 	defer C.free(outData)
 
-	rc := int(C.hashData(
-		kcAlgo,
-		C.int(int(flag)),
-		kcInData,
-		C.int(inDataLength),
-		(*C.uchar)(outData),
-		(*C.int)(unsafe.Pointer(&outDataLength)),
-	))
+	rc := int(
+		C.hashData(
+			kcAlgo,
+			C.int(int(flag)),
+			kcInData,
+			C.int(inDataLength),
+			(*C.uchar)(outData),
+			(*C.int)(unsafe.Pointer(&outDataLength)),
+		),
+	)
 
-	return C.GoString((*C.char)(outData)), cli.wrapError(rc)
+	// Всегда копируем хеш ДО проверки ошибки
+	if outData != nil {
+		result = C.GoString((*C.char)(outData))
+	}
+
+	err = cli.wrapError(rc)
+	if err != nil {
+		// Возвращаем пустую строку при ошибке
+		return "", err
+	}
+
+	return result, nil
 }

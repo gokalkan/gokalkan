@@ -28,24 +28,32 @@ func (cli *Client) GetTokens(store StoreType) (tokens string, err error) {
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	tokenLen := 8192
 	cTokens := C.malloc(C.ulong(C.sizeof_char * tokenLen))
 	defer C.free(cTokens)
 	count := uint64(0)
 
-	rc := int(C.getTokens(
-		C.ulong(uint(store)),
-		(*C.char)(cTokens),
-		(*C.ulong)(unsafe.Pointer(&count)),
-	))
+	rc := int(
+		C.getTokens(
+			C.ulong(uint(store)),
+			(*C.char)(cTokens),
+			(*C.ulong)(unsafe.Pointer(&count)),
+		),
+	)
+
+	// Всегда копируем данные ДО проверки ошибки, чтобы избежать утечек
+	// если KalkanCrypt сохранил внутренние ссылки на память
+	if cTokens != nil {
+		tokens = C.GoString((*C.char)(cTokens))
+	}
 
 	err = cli.wrapError(rc)
 	if err != nil {
-		return tokens, err
+		// Возвращаем пустую строку при ошибке, но данные уже скопированы
+		return "", err
 	}
-
-	tokens = C.GoString((*C.char)(cTokens))
 
 	return tokens, nil
 }

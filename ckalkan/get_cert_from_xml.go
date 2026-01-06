@@ -14,7 +14,7 @@ import (
 )
 
 // GetCertFromXML обеспечивает получение сертификата из XML.
-func (cli *Client) GetCertFromXML(xml string, signID int) (cert []byte, err error) {
+func (cli *Client) GetCertFromXML(xml string, signID int) (cert string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err != nil {
@@ -32,24 +32,22 @@ func (cli *Client) GetCertFromXML(xml string, signID int) (cert []byte, err erro
 	cXML := C.CString(xml)
 	defer C.free(unsafe.Pointer(cXML))
 
-	outCertLen := 32768
-	outCert := C.malloc(C.ulong(C.sizeof_uchar * outCertLen))
-	defer C.free(outCert)
+	outCertLen := C.int(50000)
+	outCert := make([]byte, outCertLen)
 
-	rc := int(C.getCertFromXML(
-		cXML,
-		C.int(len(xml)),
-		C.int(signID),
-		(*C.char)(outCert),
-		(*C.int)(unsafe.Pointer(&outCertLen)),
-	))
+	rc := int(
+		C.getCertFromXML(
+			cXML,
+			C.int(len(xml)),
+			C.int(signID),
+			(*C.char)(unsafe.Pointer(&outCert[0])),
+			&outCertLen,
+		),
+	)
 
-	err = cli.wrapError(rc)
-	if err != nil {
-		return cert, err
+	if err = cli.wrapError(rc); err != nil {
+		return "", err
 	}
 
-	cert = C.GoBytes(unsafe.Pointer(outCert), C.int(outCertLen))
-
-	return cert, nil
+	return string(outCert[:outCertLen]), nil
 }

@@ -44,6 +44,8 @@ func (cli *Client) SignXML(xml, alias string, flags Flag, signNodeID, parentSign
 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
+	defer cli.XMLFinalize()
+	defer cli.forceDefragmentation() // Принудительная дефрагментация после операции
 
 	cAlias := C.CString(alias)
 	defer C.free(unsafe.Pointer(cAlias))
@@ -77,12 +79,16 @@ func (cli *Client) SignXML(xml, alias string, flags Flag, signNodeID, parentSign
 		cParentNameSpace,
 	))
 
-	err = cli.wrapError(rc)
-	if err != nil {
-		return signedXML, err
+	// Всегда копируем подписанный XML ДО проверки ошибки
+	if outSign != nil {
+		signedXML = C.GoString((*C.char)(outSign))
 	}
 
-	signedXML = C.GoString((*C.char)(outSign))
+	err = cli.wrapError(rc)
+	if err != nil {
+		// Возвращаем пустую строку при ошибке
+		return "", err
+	}
 
 	return signedXML, nil
 }

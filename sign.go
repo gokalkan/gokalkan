@@ -29,6 +29,27 @@ func (cli *Client) Sign(data []byte, isDetached, withTSP bool) (signature []byte
 	return base64.StdEncoding.DecodeString(signatureB64)
 }
 
+func (cli *Client) SignDetached(data, signature []byte, withTSP bool) ([]byte, error) {
+	flags := ckalkan.FlagSignCMS | ckalkan.FlagInBase64 | ckalkan.FlagIn2Base64 | ckalkan.FlagOutBase64 | ckalkan.FlagDetachedData
+
+	if withTSP {
+		flags |= ckalkan.FlagWithTimestamp
+	}
+
+	signatureB64, err := cli.kc.SignData(
+		base64.StdEncoding.EncodeToString(signature),
+		base64.StdEncoding.EncodeToString(data),
+		"",
+		flags,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return base64.StdEncoding.DecodeString(signatureB64)
+}
+
 // SignXML подписывает данные в формате XML.
 func (cli *Client) SignXML(xmlData string) (string, error) {
 	return cli.kc.SignXML(xmlData, "", 0, "", "", "")

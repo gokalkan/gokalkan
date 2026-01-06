@@ -156,6 +156,23 @@ fmt.Println("Информация", info)
 fmt.Println("Ошибка", err)
 ```
 
+### Получение сертификата из XML документа
+
+```go
+cert, err := c.GetCertFromXML(body, 1)
+
+if err != nil {
+    log.Fatal(err)
+}
+
+summary, err := c.X509CertificateGetSummary(cert)
+
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Println("Сводная информация", summary)
+```
 
 ## Бенчмарки
 

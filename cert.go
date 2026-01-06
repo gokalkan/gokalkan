@@ -1,6 +1,7 @@
 package gokalkan
 
 import (
+	"errors"
 	"github.com/gokalkan/gokalkan/ckalkan"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 // see: https://adilet.zan.kz/rus/docs/V2000021440
 const (
 	oidSubjectIndividual      = "1.2.398.3.3.4.1.1"
+	oidSubjectOrganization    = "1.2.398.3.3.4.1.2"
 	oidSubjectRoleCEO         = "1.2.398.3.3.4.1.2.1"
 	oidSubjectRoleSign        = "1.2.398.3.3.4.1.2.2"
 	oidSubjectRoleSignFinance = "1.2.398.3.3.4.1.2.3"
@@ -33,23 +35,26 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if summary.Subject.CommonName, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropSubjectCommonName,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get subject common name"), err,
+		)
 	}
 
 	summary.Subject.CommonName = cleanupValue(summary.Subject.CommonName, "=")
 
 	if summary.Subject.LastName, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropSubjectGivenName,
-	); err != nil {
-		return nil, err
+	); err == nil {
+		// иногда приходят люди без фамилии в сертификате
+		summary.Subject.LastName = cleanupValue(summary.Subject.LastName, "=")
 	}
-
-	summary.Subject.LastName = cleanupValue(summary.Subject.LastName, "=")
 
 	if summary.Subject.Country, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropSubjectCountryName,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get subject country"), err,
+		)
 	}
 
 	summary.Subject.Country = cleanupValue(summary.Subject.Country, "=")
@@ -57,7 +62,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if summary.Subject.IIN, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropSubjectSerialNumber,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get subject IIN"), err,
+		)
 	}
 
 	summary.Subject.IIN = cleanupValue(summary.Subject.IIN, "IIN")
@@ -65,7 +72,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if summary.Subject.DN, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropSubjectDN,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get subject DN"), err,
+		)
 	}
 
 	ekum := make(map[string]bool)
@@ -74,7 +83,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if extKeyUsage, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropExtKeyUsage,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get extended key usage"), err,
+		)
 	}
 
 	entries := strings.Split(extKeyUsage, ";")
@@ -102,7 +113,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		if summary.Organization.Name, err = cli.kc.X509CertificateGetInfo(
 			cert, ckalkan.CertPropSubjectOrgName,
 		); err != nil {
-			return nil, err
+			return nil, errors.Join(
+				errors.New("unable to get organization name"), err,
+			)
 		}
 
 		summary.Organization.Name = cleanupValue(summary.Organization.Name, "=")
@@ -110,7 +123,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		if summary.Organization.BIN, err = cli.kc.X509CertificateGetInfo(
 			cert, ckalkan.CertPropSubjectOrgUnitName,
 		); err != nil {
-			return nil, err
+			return nil, errors.Join(
+				errors.New("unable to get organization BIN"), err,
+			)
 		}
 
 		summary.Organization.BIN = cleanupValue(summary.Organization.BIN, "BIN")
@@ -131,7 +146,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if summary.Issuer.CommonName, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropIssuerCommonName,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get issuer common name"), err,
+		)
 	}
 
 	summary.Issuer.CommonName = cleanupValue(summary.Issuer.CommonName, "=")
@@ -139,7 +156,9 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 	if summary.Issuer.Country, err = cli.kc.X509CertificateGetInfo(
 		cert, ckalkan.CertPropIssuerCountryName,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get issuer country"), err,
+		)
 	}
 
 	summary.Issuer.Country = cleanupValue(summary.Issuer.Country, "=")
@@ -148,21 +167,27 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		cert,
 		ckalkan.CertPropIssuerDN,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get issuer DN"), err,
+		)
 	}
 
 	if summary.PublicKey, err = cli.kc.X509CertificateGetInfo(
 		cert,
 		ckalkan.CertPropPubKey,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get public key"), err,
+		)
 	}
 
 	if summary.SerialNumber, err = cli.kc.X509CertificateGetInfo(
 		cert,
 		ckalkan.CertPropCertCN,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get serial number"), err,
+		)
 	}
 
 	if parts := strings.Split(summary.SerialNumber, "="); len(parts) == 2 {
@@ -173,10 +198,14 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		cert,
 		ckalkan.CertPropNotAfter,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get notAfter time"), err,
+		)
 	} else if part := strings.Split(notAfter, "="); len(part) == 2 {
 		if summary.NotAfter, err = time.Parse(timeLayout, part[1]); err != nil {
-			return nil, err
+			return nil, errors.Join(
+				errors.New("unable to parse notAfter time: "+part[1]), err,
+			)
 		}
 	}
 
@@ -184,10 +213,14 @@ func (cli *Client) X509CertificateGetSummary(cert string) (*Summary, error) {
 		cert,
 		ckalkan.CertPropNotBefore,
 	); err != nil {
-		return nil, err
+		return nil, errors.Join(
+			errors.New("unable to get notBefore time"), err,
+		)
 	} else if part := strings.Split(notBefore, "="); len(part) == 2 {
 		if summary.NotBefore, err = time.Parse(timeLayout, part[1]); err != nil {
-			return nil, err
+			return nil, errors.Join(
+				errors.New("unable to parse notBefore time: "+part[1]), err,
+			)
 		}
 	}
 
